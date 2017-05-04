@@ -1,1 +1,1 @@
-include ':watchdog'
+include ':watchdog', ':contacts'
