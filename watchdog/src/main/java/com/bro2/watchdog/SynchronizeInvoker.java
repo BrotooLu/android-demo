@@ -29,14 +29,15 @@ public final class SynchronizeInvoker {
             mWaitMax = waitMax < 0 ? 0 : waitMax;
         }
 
-        private void lock() {
-            synchronized (mLock) {
-                try {
-                    mLock.wait(mWaitMax);
-                } catch (InterruptedException e) {
-                    // TODO exception handle
-                    e.printStackTrace();
-                }
+        Object getLock() {
+            return mLock;
+        }
+
+        void waitLock() {
+            try {
+                mLock.wait(mWaitMax);
+            } catch (InterruptedException e) {
+                // do nothing
             }
         }
 
@@ -69,8 +70,10 @@ public final class SynchronizeInvoker {
         }
 
         final LockableRunnable lockableRunnable = new LockableRunnable(runnable, lock, waitMax);
-        new Thread(lockableRunnable, threadName).start();
-        lockableRunnable.lock();
+        synchronized (lockableRunnable.getLock()) {
+            new Thread(lockableRunnable, threadName).start();
+            lockableRunnable.waitLock();
+        }
 
         return lockableRunnable.exception;
     }
@@ -104,8 +107,10 @@ public final class SynchronizeInvoker {
         }
 
         final LockableRunnable lockableRunnable = new LockableRunnable(runnable, lock, waitMax);
-        handler.postAtFrontOfQueue(lockableRunnable);
-        lockableRunnable.lock();
+        synchronized (lockableRunnable.getLock()) {
+            handler.postAtFrontOfQueue(lockableRunnable);
+            lockableRunnable.waitLock();
+        }
 
         return lockableRunnable.exception;
     }
