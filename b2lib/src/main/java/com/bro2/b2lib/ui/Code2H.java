@@ -22,8 +22,10 @@ public class Code2H {
                 return "cancel";
             case MotionEvent.ACTION_OUTSIDE:
                 return "outside";
+            case MotionEvent.ACTION_UP:
+                return "up";
             default:
-                return "code: " + action;
+                return "action: " + action;
         }
     }
 
