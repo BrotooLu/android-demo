@@ -1,1 +1,1 @@
-include ':watchdog', ':contacts'
+include ':b2lib', ':demo'

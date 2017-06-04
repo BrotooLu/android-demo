@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">demo</string>
+    <string name="err_not_found_module">NO TEST MODULE</string>
+</resources>
