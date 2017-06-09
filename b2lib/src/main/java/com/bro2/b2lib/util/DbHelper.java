@@ -44,6 +44,7 @@ public class DbHelper {
                                             String[] selectionArgs, String order,
                                             Class<T> clazz) {
         ArrayList<T> list = new ArrayList<>();
+        Cursor cursor = null;
         try {
             ArrayList<String> projection = new ArrayList<>();
             ArrayList<Class> projectionType = new ArrayList<>();
@@ -57,7 +58,7 @@ public class DbHelper {
                 }
             }
 
-            Cursor cursor = ctx.getContentResolver().query(uri, (String[]) projection.toArray(),
+            cursor = ctx.getContentResolver().query(uri, (String[]) projection.toArray(),
                     selection, selectionArgs, order);
             if (cursor == null) {
                 if (DEBUG) {
@@ -75,7 +76,7 @@ public class DbHelper {
             for (int i = 0; i < count; ++i) {
                 cursor.moveToNext();
                 T entity = clazz.newInstance();
-                for (int j = 0; j < projectionCount; ++i) {
+                for (int j = 0; j < projectionCount; ++j) {
                     Class c = projectionType.get(j);
                     Field field = projectionField.get(j);
                     boolean accessible = field.isAccessible();
@@ -86,7 +87,9 @@ public class DbHelper {
                         field.setBoolean(entity, cursor.getInt(index[j]) == 0);
                     } else if (c == int.class) {
                         field.setInt(entity, cursor.getInt(index[j]));
-                    } else {
+                    } else if (c == long.class) {
+                        field.setLong(entity, cursor.getLong(index[j]));
+                    }  else {
                         field.set(entity, cursor.getString(index[j]));
                     }
                     if (!accessible) {
@@ -98,6 +101,10 @@ public class DbHelper {
         } catch (Exception e) {
             if (DEBUG) {
                 Log.e(TAG, null, new Exception());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
             }
         }
         return list;
