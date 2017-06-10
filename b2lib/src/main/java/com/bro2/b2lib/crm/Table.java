@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Table {
-    String authority() default "com.roobo.configure.provider";
+    String authority() default "com.bro2.provider";
 
     String path();
 }

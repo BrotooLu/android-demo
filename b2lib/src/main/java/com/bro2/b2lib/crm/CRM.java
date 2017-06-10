@@ -7,10 +7,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bro2.b2lib.B2LibEnv.DEBUG;
+import static com.bro2.b2lib.B2LibEnv.TAG;
 
 /**
  * Created on 2017/6/10.
@@ -20,9 +24,6 @@ import java.util.List;
  */
 
 public class CRM {
-    private static final boolean DEBUG = true;
-    private static final String TAG = "crm";
-
     private static class Statement {
         final ArrayList<String> projection = new ArrayList<>();
         final ArrayList<Class> projectionType = new ArrayList<>();
@@ -209,7 +210,7 @@ public class CRM {
                 .query(statement.uri, arr, selection, selectionArgs, order);
         if (cursor == null) {
             if (DEBUG) {
-                Log.d(TAG, "[DbHelper.fetchEntities] cursor is null");
+                Log.d(TAG, "[CRM.fetchEntities] cursor is null");
             }
             return list;
         }
@@ -257,6 +258,24 @@ public class CRM {
         }
         cursor.close();
         return list;
+    }
+
+    public <T> Pair<Boolean, T> fillEntity(Context ctx, T entity) {
+        if (ctx == null || entity == null) {
+            throw new CRMException("null parameter");
+        }
+
+        Class clazz = entity.getClass();
+        Statement statement = new Statement(clazz);
+        List<?> entities = fetchEntities(ctx, statement.getEntityQuery(entity), clazz);
+        if (entities.size() == 1) {
+            return new Pair<>(true, (T) entities.get(0));
+        }
+
+        if (DEBUG) {
+            Log.d(TAG, "[CRM.fillEntity] no unique entity found: " + entities.size());
+        }
+        return new Pair<>(false, entity);
     }
 
 }
