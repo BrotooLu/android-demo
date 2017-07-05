@@ -1,7 +1,5 @@
 package com.bro2.demo;
 
-import com.bro2.demo.BuildConfig;
-
 /**
  * Created on 2017/6/4.
  *

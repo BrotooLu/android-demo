@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+
+    <script language="JavaScript">
+
+        function bridgeCall(txt) {
+            var resSpan = document.getElementById("result");
+            var res = JsBridge.setText(txt);
+            resSpan.innerText = res;
+        }
+
+        function bridgeCall2(txt, def) {
+            var resSpan = document.getElementById("result");
+            var res = prompt(txt, def);
+            resSpan.innerText = res;
+        }
+
+        function setWebText(txt) {
+            var resSpan = document.getElementById("result");
+            resSpan.innerText = txt;
+            return "done setWebText";
+        }
+
+    </script>
+
+</head>
+<body>
+
+<h1>WebView</h1>
+
+<span>Native Result:</span>
+<span id="result"></span>
+
+<br/>
+
+<button onclick="bridgeCall('called from interface')">CallByAddInterface</button>
+
+<button onclick="bridgeCall2('called from prompt', 'empty')">CallByJsPrompt</button>
+
+
+</body>
+</html>
