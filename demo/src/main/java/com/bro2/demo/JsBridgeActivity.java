@@ -9,9 +9,13 @@ import android.webkit.JsPromptResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
 import static com.bro2.demo.DemoEnv.TAG;
@@ -56,7 +60,42 @@ public class JsBridgeActivity extends Activity {
                 }
                 return super.shouldOverrideUrlLoading(view, request);
             }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                if (DEBUG) {
+                    Log.d(TAG, "shouldInterceptRequest: old " + url);
+                }
+
+                if (url.contains("avatars3.githubusercontent.com")) {
+                    if (DEBUG) {
+                        Log.d(TAG, "shouldInterceptRequest: redirect");
+                    }
+                    InputStream input = null;
+                    try {
+                        input = getAssets().open("ic_launcher.png");
+                    } catch (IOException e) {
+                        if (DEBUG) {
+                            Log.e(TAG, "shouldInterceptRequest", e);
+                        }
+                    }
+
+                    WebResourceResponse response = new WebResourceResponse("image/png", "UTF-8", input);
+                    return response;
+                }
+                return super.shouldInterceptRequest(view, url);
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                if (DEBUG) {
+                    Log.d(TAG, "shouldInterceptRequest: " + request.getUrl());
+                }
+                return super.shouldInterceptRequest(view, request);
+            }
+
         });
+
         mWebView.loadUrl("file:///android_asset/web.html");
     }
 

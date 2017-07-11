@@ -36,4 +36,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-apply plugin: 'com.bro2.gradle.transform-demo'
+//apply plugin: 'com.bro2.gradle.transform-demo'
