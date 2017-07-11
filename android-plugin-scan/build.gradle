@@ -1,6 +1,0 @@
-apply plugin: 'java'
-
-dependencies {
-    compile gradleApi()
-    compile 'com.android.tools.build:gradle:2.3.3'
-}

@@ -1,1 +1,1 @@
-include ':b2lib', ':demo', ':android-plugin-scan'
+include ':b2lib', ':demo'
