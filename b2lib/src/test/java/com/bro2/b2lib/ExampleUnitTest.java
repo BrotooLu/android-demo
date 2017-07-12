@@ -4,7 +4,7 @@ import com.bro2.b2lib.util.ReflectUtil;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -25,12 +25,18 @@ public class ExampleUnitTest {
         private double doubleVal;
         private String objVal = "obj";
 
+        int rep;
+
         @Override
         public String toString() {
             return "b: " + byteVal + " z: " + boolVal + " c: " + charVal + " s: " + shortVal
                     + " i: " + intVal + " j: " + longVal + " f: " + floatVal + " d: " + doubleVal
-                    + " obj: " + objVal + " static: " + sVal;
+                    + " obj: " + objVal + " static: " + sVal + " rep: " + rep;
         }
+    }
+
+    private static class Child extends Rep {
+
     }
 
     @Test
@@ -47,7 +53,7 @@ public class ExampleUnitTest {
         ReflectUtil.replaceField(rep, "longVal", 1);
         ReflectUtil.replaceField(rep, "floatVal", 1);
         ReflectUtil.replaceField(rep, "doubleVal", 1);
-        ReflectUtil.replaceField(rep, "objVal", 1);
+        ReflectUtil.replaceField(rep, "objVal", "1");
 
         ReflectUtil.replaceStaticField(Rep.class, "sVal", 1);
 
@@ -70,6 +76,8 @@ public class ExampleUnitTest {
         ReflectUtil.replaceStaticField("com.bro2.b2lib.ExampleUnitTest$Rep", "sVal", 2);
 
         System.out.println("after2: " + rep);
+
+        ReflectUtil.replaceField(rep, "none", 1);
     }
 
     @Test
@@ -100,7 +108,7 @@ public class ExampleUnitTest {
         ReflectUtil.replaceField(rep, "longVal", 1);
         ReflectUtil.replaceField(rep, "floatVal", 1);
         ReflectUtil.replaceField(rep, "doubleVal", 1);
-        ReflectUtil.replaceField(rep, "objVal", 1);
+        ReflectUtil.replaceField(rep, "objVal", "1");
 
         ReflectUtil.replaceStaticField(Rep.class, "sVal", 1);
 
@@ -119,5 +127,20 @@ public class ExampleUnitTest {
         assertEquals(ReflectUtil.getStaticField(rep.getClass(), "sVal"), 1);
 
         assertEquals(ReflectUtil.getStaticField("com.bro2.b2lib.ExampleUnitTest$Rep", "sVal"), 1);
+    }
+
+    @Test
+    public void refExtTest() {
+        Child child = new Child();
+
+        System.out.println("before : " + child);
+
+        ReflectUtil.replaceField(child, "rep", 1);
+
+        System.out.println(" after : " + child);
+
+        ReflectUtil.replaceField(child, "none", 1);
+
+        System.out.println("after1 : " + child);
     }
 }

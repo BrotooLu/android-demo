@@ -12,9 +12,6 @@ import static com.bro2.b2lib.B2LibEnv.TAG;
 
 /**
  * Created on 2017/7/12.
- * <p>
- * 调用replace方法的时候如果field类型为char，而调用者使用自动装箱会将数字转换为Integer类型，导致出现
- * 当replace传递的值1会被转化为'1'
  *
  * @author Bro2
  * @version 1.0
@@ -22,20 +19,32 @@ import static com.bro2.b2lib.B2LibEnv.TAG;
 
 public class ReflectUtil {
 
-    private static boolean replaceField(Object obj, Class clazz, String field, Object val) {
-        boolean flag = true;
-        Class c = clazz == null ? obj.getClass() : clazz;
+    private static Field getClassField(Class clazz, String field) {
         Field f = null;
         try {
-            f = c.getDeclaredField(field);
+            f = clazz.getDeclaredField(field);
         } catch (NoSuchFieldException e) {
-            flag = false;
             if (DEBUG) {
-                Log.e(TAG, "[ReflectUtil.replaceField]", e);
+                Log.e(TAG, "[ReflectUtil.getClassField]", e);
             }
         }
 
-        if (!flag) {
+        if (f != null) {
+            return f;
+        }
+
+        if (clazz == Object.class) {
+            return null;
+        } else {
+            return getClassField(clazz.getSuperclass(), field);
+        }
+    }
+
+    private static boolean replaceField(Object obj, Class clazz, String field, Object val) {
+        Class c = clazz == null ? obj.getClass() : clazz;
+        Field f = getClassField(c, field);
+
+        if (f == null) {
             return false;
         }
 
@@ -116,8 +125,8 @@ public class ReflectUtil {
             } else {
                 f.set(obj, val);
             }
+            return true;
         } catch (IllegalAccessException | NumberFormatException e) {
-            flag = false;
             if (DEBUG) {
                 Log.e(TAG, "[ReflectUtil.replaceField]", e);
             }
@@ -127,18 +136,22 @@ public class ReflectUtil {
             }
         }
 
-        return flag;
+        return false;
     }
 
     public static boolean replaceStaticField(Class clazz, String field, Object val) {
         if (clazz == null || TextUtils.isEmpty(field)) {
-            new B2Exception("illegal args, class: " + clazz + " field: " + field);
+            throw new B2Exception("illegal args, class: " + clazz + " field: " + field);
         }
 
         return replaceField(null, clazz, field, val);
     }
 
-    private static Class getClassOrNull(String name) {
+    public static Class getClassOrNull(String name) {
+        if (TextUtils.isEmpty(name)) {
+            throw new B2Exception("class name is empty");
+        }
+
         Class c = null;
         boolean flag = true;
 
@@ -156,7 +169,7 @@ public class ReflectUtil {
 
     public static boolean replaceStaticField(String clazz, String field, Object val) {
         if (TextUtils.isEmpty(clazz) || TextUtils.isEmpty(field)) {
-            new B2Exception("illegal args, class: " + clazz + " field: " + field);
+            throw new B2Exception("illegal args, class: " + clazz + " field: " + field);
         }
 
         Class c = getClassOrNull(clazz);
@@ -165,26 +178,17 @@ public class ReflectUtil {
 
     public static boolean replaceField(Object obj, String field, Object val) {
         if (obj == null || TextUtils.isEmpty(field)) {
-            new B2Exception("illegal args, obj: " + obj + " field: " + field);
+            throw new B2Exception("illegal args, obj: " + obj + " field: " + field);
         }
 
         return replaceField(obj, null, field, val);
     }
 
     private static Object getField(Object obj, Class clazz, String field) {
-        boolean flag = true;
         Class c = clazz == null ? obj.getClass() : clazz;
-        Field f = null;
-        try {
-            f = c.getDeclaredField(field);
-        } catch (NoSuchFieldException e) {
-            flag = false;
-            if (DEBUG) {
-                Log.e(TAG, "[ReflectUtil.getField]", e);
-            }
-        }
+        Field f = getClassField(c, field);
 
-        if (!flag) {
+        if (f == null) {
             return null;
         }
 
@@ -194,10 +198,8 @@ public class ReflectUtil {
             f.setAccessible(true);
         }
 
-        Object ret = null;
-
         try {
-            ret = f.get(obj);
+            return f.get(obj);
         } catch (IllegalAccessException e) {
             if (DEBUG) {
                 Log.e(TAG, "[ReflectUtil.getField]", e);
@@ -208,12 +210,12 @@ public class ReflectUtil {
             }
         }
 
-        return ret;
+        return null;
     }
 
     public static Object getField(Object obj, String field) {
         if (obj == null || TextUtils.isEmpty(field)) {
-            new B2Exception("illegal args, obj: " + obj + " field: " + field);
+            throw new B2Exception("illegal args, obj: " + obj + " field: " + field);
         }
 
         return getField(obj, null, field);
@@ -221,7 +223,7 @@ public class ReflectUtil {
 
     public static Object getStaticField(Class clazz, String field) {
         if (clazz == null || TextUtils.isEmpty(field)) {
-            new B2Exception("illegal args, clazz: " + clazz + " field: " + field);
+            throw new B2Exception("illegal args, clazz: " + clazz + " field: " + field);
         }
 
         return getField(null, clazz, field);
@@ -229,7 +231,7 @@ public class ReflectUtil {
 
     public static Object getStaticField(String clazz, String field) {
         if (TextUtils.isEmpty(clazz) || TextUtils.isEmpty(field)) {
-            new B2Exception("illegal args, class: " + clazz + " field: " + field);
+            throw new B2Exception("illegal args, class: " + clazz + " field: " + field);
         }
 
         Class c = getClassOrNull(clazz);
