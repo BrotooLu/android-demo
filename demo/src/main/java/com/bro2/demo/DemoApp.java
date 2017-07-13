@@ -24,6 +24,14 @@ import static com.bro2.demo.DemoEnv.TAG;
  */
 
 public class DemoApp extends Application {
+    private static final String HARD_CODE_SM = "android.os.ServiceManager";
+    private static final String HARD_CODE_IAM = "android.app.IActivityManager";
+    private static final String HARD_CODE_AMN = "android.app.ActivityManagerNative";
+
+    private static final String HARD_CODE_SCACHE = "sCache";
+    private static final String HARD_CODE_G_DEFAULT = "gDefault";
+    private static final String HARD_CODE_M_INSTANCE = "mInstance";
+
     private static class MyHashMap<K, V> extends HashMap<K, V> {
         HashMap<K, V> map;
 
@@ -53,7 +61,7 @@ public class DemoApp extends Application {
     private static class MyAMP implements InvocationHandler {
         Object original;
 
-        public MyAMP(Object original) {
+        MyAMP(Object original) {
             this.original = original;
         }
 
@@ -72,26 +80,23 @@ public class DemoApp extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        if (DEBUG) {
-            Log.d(TAG, "[DemoApp.attachBaseContext] <----------------------------------------------");
-        }
         HashMap<String, IBinder> cache = (HashMap<String, IBinder>) ReflectUtil
-                .getStaticField("android.os.ServiceManager", "sCache");
+                .getStaticField(HARD_CODE_SM, HARD_CODE_SCACHE);
         for (String k : cache.keySet()) {
             if (DEBUG) {
                 Log.d(TAG, "[DemoApp.attachBaseContext] now cache, k: " + k + " val: " + cache.get(k));
             }
         }
         MyHashMap<String, IBinder> my = new MyHashMap<>(cache);
-        ReflectUtil.replaceStaticField("android.os.ServiceManager", "sCache", my);
+        ReflectUtil.replaceStaticField(HARD_CODE_SM, HARD_CODE_SCACHE, my);
 
-        Object gDefault = ReflectUtil.getStaticField("android.app.ActivityManagerNative", "gDefault");
-        Object amp = ReflectUtil.getField(gDefault, "mInstance");
+        Object gDefault = ReflectUtil.getStaticField(HARD_CODE_AMN, HARD_CODE_G_DEFAULT);
+        Object amp = ReflectUtil.getField(gDefault, HARD_CODE_M_INSTANCE);
         Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class[]{ReflectUtil.getClassOrNull("android.app.IActivityManager")},
+                new Class[]{ReflectUtil.getClassOrNull(HARD_CODE_IAM)},
                 new MyAMP(amp)
         );
-        ReflectUtil.replaceField(gDefault, "mInstance", proxy);
+        ReflectUtil.replaceField(gDefault, HARD_CODE_M_INSTANCE, proxy);
 
         super.attachBaseContext(base);
     }
