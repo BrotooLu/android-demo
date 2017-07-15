@@ -182,7 +182,7 @@ public class ReflectUtil {
         return replaceField(obj, null, field, val);
     }
 
-    private static Object getField(Object obj, Class clazz, String field) {
+    private static <T> T getField(Object obj, Class clazz, String field) {
         Class c = clazz == null ? obj.getClass() : clazz;
         Field f = getClassField(c, field);
 
@@ -197,7 +197,7 @@ public class ReflectUtil {
         }
 
         try {
-            return f.get(obj);
+            return (T)(f.get(obj));
         } catch (IllegalAccessException e) {
             if (DEBUG) {
                 Log.e(TAG, "[ReflectUtil.getField]", e);
@@ -211,7 +211,7 @@ public class ReflectUtil {
         return null;
     }
 
-    public static Object getField(Object obj, String field) {
+    public static <T> T getField(Object obj, String field) {
         if (obj == null || TextUtils.isEmpty(field)) {
             throw new B2Exception("illegal args, obj: " + obj + " field: " + field);
         }
@@ -227,12 +227,12 @@ public class ReflectUtil {
         return getField(null, clazz, field);
     }
 
-    public static Object getStaticField(String clazz, String field) {
+    public static <T> T getStaticField(String clazz, String field) {
         if (TextUtils.isEmpty(clazz) || TextUtils.isEmpty(field)) {
             throw new B2Exception("illegal args, class: " + clazz + " field: " + field);
         }
 
         Class c = getClassOrNull(clazz);
-        return c == null ? null : getField(null, c, field);
+        return c == null ? null : (T)getField(null, c, field);
     }
 }

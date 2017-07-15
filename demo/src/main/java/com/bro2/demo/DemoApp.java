@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
 import static com.bro2.demo.DemoEnv.SWITCH_HOOK_AMS;
+import static com.bro2.demo.DemoEnv.SWITCH_HOOK_CLASS_LOADER;
 import static com.bro2.demo.DemoEnv.SWITCH_HOOK_SM_CACHE;
 import static com.bro2.demo.DemoEnv.TAG;
 
@@ -28,9 +29,12 @@ public class DemoApp extends Application {
     private static final String HARD_CODE_IAM = "android.app.IActivityManager";
     private static final String HARD_CODE_AMN = "android.app.ActivityManagerNative";
 
-    private static final String HARD_CODE_SCACHE = "sCache";
+    private static final String HARD_CODE_S_CACHE = "sCache";
     private static final String HARD_CODE_G_DEFAULT = "gDefault";
     private static final String HARD_CODE_M_INSTANCE = "mInstance";
+
+    private static final String HARD_CODE_M_PACKAGE_INFO = "mPackageInfo";
+    private static final String HARD_CODE_M_CLASS_LOADER = "mClassLoader";
 
     private static class MyHashMap<K, V> extends HashMap<K, V> {
         HashMap<K, V> map;
@@ -78,18 +82,39 @@ public class DemoApp extends Application {
         }
     }
 
+    private static class MyClassLoader extends ClassLoader {
+        ClassLoader original;
+
+        MyClassLoader(ClassLoader original) {
+            this.original = original;
+        }
+
+        @Override
+        public Class<?> loadClass(String name) throws ClassNotFoundException {
+            if (DEBUG) {
+                Log.d(TAG, "[MyClassLoader.loadClass] " + name);
+            }
+
+            if ("com.bro2.demo.JsBridgeActivity".equals(name)) {
+                return DgActivity.class;
+            }
+
+            return original.loadClass(name);
+        }
+
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         if (SWITCH_HOOK_SM_CACHE) {
-            HashMap<String, IBinder> cache = (HashMap<String, IBinder>) ReflectUtil
-                    .getStaticField(HARD_CODE_SM, HARD_CODE_SCACHE);
+            HashMap<String, IBinder> cache = ReflectUtil.getStaticField(HARD_CODE_SM, HARD_CODE_S_CACHE);
             for (String k : cache.keySet()) {
                 if (DEBUG) {
                     Log.d(TAG, "[DemoApp.attachBaseContext] now cache, k: " + k + " val: " + cache.get(k));
                 }
             }
             MyHashMap<String, IBinder> my = new MyHashMap<>(cache);
-            ReflectUtil.replaceStaticField(HARD_CODE_SM, HARD_CODE_SCACHE, my);
+            ReflectUtil.replaceStaticField(HARD_CODE_SM, HARD_CODE_S_CACHE, my);
         }
 
         if (SWITCH_HOOK_AMS) {
@@ -102,11 +127,21 @@ public class DemoApp extends Application {
             ReflectUtil.replaceField(gDefault, HARD_CODE_M_INSTANCE, proxy);
         }
 
+        if (SWITCH_HOOK_CLASS_LOADER) {
+            Object loadedApk = ReflectUtil.getField(base, HARD_CODE_M_PACKAGE_INFO);
+            ClassLoader ori = ReflectUtil.getField(loadedApk, HARD_CODE_M_CLASS_LOADER);
+            ReflectUtil.replaceField(loadedApk, HARD_CODE_M_CLASS_LOADER, new MyClassLoader(ori));
+        }
+
         super.attachBaseContext(base);
     }
 
     @Override
     public void onCreate() {
+        if (DEBUG) {
+            Log.d(TAG, "[DemoApp.attachBaseContext] class loader: "
+                    + this.getClassLoader().getClass().getName());
+        }
         super.onCreate();
     }
 }
