@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
+import static com.bro2.demo.DemoEnv.SWITCH_HOOK_AMS;
+import static com.bro2.demo.DemoEnv.SWITCH_HOOK_SM_CACHE;
 import static com.bro2.demo.DemoEnv.TAG;
 
 /**
@@ -78,23 +80,27 @@ public class DemoApp extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        HashMap<String, IBinder> cache = (HashMap<String, IBinder>) ReflectUtil
-                .getStaticField(HARD_CODE_SM, HARD_CODE_SCACHE);
-        for (String k : cache.keySet()) {
-            if (DEBUG) {
-                Log.d(TAG, "[DemoApp.attachBaseContext] now cache, k: " + k + " val: " + cache.get(k));
+        if (SWITCH_HOOK_SM_CACHE) {
+            HashMap<String, IBinder> cache = (HashMap<String, IBinder>) ReflectUtil
+                    .getStaticField(HARD_CODE_SM, HARD_CODE_SCACHE);
+            for (String k : cache.keySet()) {
+                if (DEBUG) {
+                    Log.d(TAG, "[DemoApp.attachBaseContext] now cache, k: " + k + " val: " + cache.get(k));
+                }
             }
+            MyHashMap<String, IBinder> my = new MyHashMap<>(cache);
+            ReflectUtil.replaceStaticField(HARD_CODE_SM, HARD_CODE_SCACHE, my);
         }
-        MyHashMap<String, IBinder> my = new MyHashMap<>(cache);
-        ReflectUtil.replaceStaticField(HARD_CODE_SM, HARD_CODE_SCACHE, my);
 
-        Object gDefault = ReflectUtil.getStaticField(HARD_CODE_AMN, HARD_CODE_G_DEFAULT);
-        Object amp = ReflectUtil.getField(gDefault, HARD_CODE_M_INSTANCE);
-        Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class[]{ReflectUtil.getClassOrNull(HARD_CODE_IAM)},
-                new MyAMP(amp)
-        );
-        ReflectUtil.replaceField(gDefault, HARD_CODE_M_INSTANCE, proxy);
+        if (SWITCH_HOOK_AMS) {
+            Object gDefault = ReflectUtil.getStaticField(HARD_CODE_AMN, HARD_CODE_G_DEFAULT);
+            Object amp = ReflectUtil.getField(gDefault, HARD_CODE_M_INSTANCE);
+            Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                    new Class[]{ReflectUtil.getClassOrNull(HARD_CODE_IAM)},
+                    new MyAMP(amp)
+            );
+            ReflectUtil.replaceField(gDefault, HARD_CODE_M_INSTANCE, proxy);
+        }
 
         super.attachBaseContext(base);
     }
