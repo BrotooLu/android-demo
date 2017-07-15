@@ -3,11 +3,9 @@ package com.bro2.b2lib.ui;
 import android.view.MotionEvent;
 
 /**
- * Created on 2017/6/4.
+ * Created by Bro2 on 2017/6/4
  * code to human-readable string
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class Code2H {

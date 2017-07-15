@@ -1,10 +1,8 @@
 package com.bro2.b2lib.crm;
 
 /**
- * Created on 2017/6/10.
+ * Created by Bro2 on 2017/6/10
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class CRMException extends RuntimeException {

@@ -17,10 +17,8 @@ import static com.bro2.b2lib.B2LibEnv.DEBUG;
 import static com.bro2.b2lib.B2LibEnv.TAG;
 
 /**
- * Created on 2017/6/10.
+ * Created by Bro2 on 2017/6/10
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class CRM {

@@ -1,10 +1,8 @@
 package android.text;
 
 /**
- * Created on 2017/7/12.
+ * Created by Bro2 on 2017/7/12
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class TextUtils {

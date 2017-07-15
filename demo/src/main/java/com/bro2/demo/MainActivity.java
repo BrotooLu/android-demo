@@ -13,10 +13,8 @@ import static com.bro2.demo.DemoEnv.DEBUG;
 import static com.bro2.demo.DemoEnv.TAG;
 
 /**
- * Created on 2017/6/4.
+ * Created by Bro2 on 2017/6/4
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class MainActivity extends Activity {

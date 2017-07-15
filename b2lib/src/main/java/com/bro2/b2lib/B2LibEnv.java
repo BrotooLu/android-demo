@@ -1,10 +1,8 @@
 package com.bro2.b2lib;
 
 /**
- * Created on 2017/6/4.
+ * Created by Bro2 on 2017/6/4
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class B2LibEnv {

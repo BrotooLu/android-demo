@@ -12,10 +12,8 @@ import static com.bro2.b2lib.B2LibEnv.DEBUG;
 import static com.bro2.b2lib.B2LibEnv.TAG;
 
 /**
- * Created on 2017/6/4.
+ * Created by Bro2 on 2017/6/4
  *
- * @author Bro2
- * @version 1.0
  */
 
 public class DraggableVG extends RelativeLayout {

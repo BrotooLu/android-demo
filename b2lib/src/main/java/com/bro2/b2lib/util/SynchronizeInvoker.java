@@ -3,7 +3,7 @@ package com.bro2.b2lib.util;
 import android.os.Handler;
 
 /**
- * Created by bro2 on 17-4-17.
+ * Created by Bro2 on 2017/4/17
  * 工作流程：
  *        invokeThread                      workThread
  *             | ...
