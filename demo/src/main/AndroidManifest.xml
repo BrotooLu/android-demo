@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.bro2.demo">
+    package="com.bro2.demo">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".DemoApp"
@@ -14,19 +14,17 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="test-module"
-            android:value="TrembledWebViewActivity"/>
+            android:value="JsBridgeActivity" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DgActivity"/>
-        <activity android:name=".JsBridgeActivity"/>
-        <activity android:name=".TrembledWebViewActivity">
-        </activity>
+        <activity android:name=".DgActivity"></activity>
+        <activity android:name=".JsBridgeActivity"></activity>
     </application>
 
 </manifest>
