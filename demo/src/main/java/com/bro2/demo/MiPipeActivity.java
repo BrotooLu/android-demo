@@ -11,6 +11,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,40 @@ import static com.bro2.demo.DemoEnv.TAG;
 public class MiPipeActivity extends Activity {
 
     private static final int TASK_NUMBER = 4;
+    private static CountDownLatch latch;
+
+    private static class ReadRunnable implements Runnable {
+        final InputStream in;
+        final int id;
+
+        private ReadRunnable(InputStream in, int id) {
+            this.in = in;
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            try {
+                byte[] buffer = new byte[128];
+                int read;
+
+                StringBuilder msg = new StringBuilder();
+                while ((read = in.read(buffer, 0, buffer.length)) >= 0) {
+                    msg.append(new String(buffer, 0, read));
+                }
+
+                if (DEBUG) {
+                    Log.e(TAG, "[ReadRunnable.run] read done id: " + id + " content: " + msg);
+                }
+
+                latch.countDown();
+            } catch (Exception e) {
+                if (DEBUG) {
+                    Log.e(TAG, "[ReadRunnable.run] ", e);
+                }
+            }
+        }
+    }
 
     private static class WriteRunnable implements Runnable {
 
@@ -43,17 +78,30 @@ public class MiPipeActivity extends Activity {
         public void run() {
             try {
                 if (DEBUG) {
-                    Log.d(TAG, "[WriteRunnable.run] start write:" + id + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    Log.d(TAG, "[WriteRunnable.run] start write:" + id + ">>>>>>>>>>>>>>>>>>>>>>>");
                 }
-                Thread.sleep((long) (Math.random() * 1000));
-                for (int i = 0; i < 10; ++i) {
-                    byte[] buffer = ("write " + i).getBytes();
-                    callback.onData(id, buffer, buffer.length);
+                int random = (int) (Math.random() * 1000);
+                Thread.sleep(random);
+                StringBuilder writeMsg = new StringBuilder();
+                String data = "id: " + id + " sleep: " + random;
+                byte[] buffer = data.getBytes();
+                writeMsg.append(data);
+                callback.onData(id, buffer, buffer.length);
+
+                data = " content";
+                writeMsg.append(data);
+                buffer = data.getBytes();
+                callback.onData(id, buffer, buffer.length);
+
+                data = " " + Math.random();
+                writeMsg.append(data);
+                buffer = data.getBytes();
+                callback.onData(id, buffer, buffer.length);
+
+                if (DEBUG) {
+                    Log.d(TAG, "[WriteRunnable.run] write done " + writeMsg);
                 }
                 callback.onFinish(id);
-                if (DEBUG) {
-                    Log.d(TAG, "[WriteRunnable.run] write done:" + id + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                }
             } catch (Exception e) {
                 if (DEBUG) {
                     Log.e(TAG, "[WriteRunnable.run] ", e);
@@ -67,9 +115,10 @@ public class MiPipeActivity extends Activity {
         @Override
         public void run() {
             try {
+                ArrayList<ReadRunnable> tasks = new ArrayList<>();
+
                 for (int i = 0; i < TASK_NUMBER; ++i) {
                     final PipedOutputStream out = new PipedOutputStream();
-                    PipedInputStream in = new PipedInputStream(out);
                     downloadExecutor.execute(new WriteRunnable(new WriteRunnable.ICallback() {
                         @Override
                         public void onData(int id, byte[] buffer, int len) {
@@ -96,12 +145,22 @@ public class MiPipeActivity extends Activity {
                             }
                         }
                     }, i));
-                    tasks.add(in);
+                    tasks.add(new ReadRunnable(new PipedInputStream(out), i));
                 }
+
                 if (DEBUG) {
-                    Log.d(TAG, "[RequestRunnable.run] request over, start render-------------------");
+                    Log.e(TAG, "[RequestRunnable.run] request over, start render#################");
                 }
-                new Thread(new RenderRunnable(), "render thread").start();
+
+                for (int i = 0; i < TASK_NUMBER; ++i) {
+                    readExecutor.execute(tasks.get(i));
+                }
+
+                latch.await();
+
+                if (DEBUG) {
+                    Log.e(TAG, "[RequestRunnable.run] render over################################");
+                }
             } catch (Exception e) {
                 if (DEBUG) {
                     Log.e(TAG, "[RequestRunnable.run] ", e);
@@ -110,46 +169,6 @@ public class MiPipeActivity extends Activity {
         }
     }
 
-    private static class RenderRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            int len = tasks.size();
-            if (DEBUG) {
-                Log.d(TAG, "[RenderRunnable.run] start render, tasks: " + len + "*********************");
-            }
-            for (int i = 0; i < len; ++i) {
-                InputStream in = tasks.get(i);
-                try {
-                    byte[] buffer = new byte[128];
-                    int read;
-
-                    if (DEBUG) {
-                        Log.d(TAG, "[RenderRunnable.run] read start:" + i + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                    }
-                    StringBuilder msg = new StringBuilder();
-                    while ((read = in.read(buffer, 0, buffer.length)) >= 0) {
-                        msg.append(new String(buffer, 0, read));
-                    }
-                    if (DEBUG) {
-                        Log.d(TAG, "[RenderRunnable.run] read msg: " + msg);
-                    }
-                    if (DEBUG) {
-                        Log.d(TAG, "[RenderRunnable.run] read done:" + i + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                    }
-                } catch (Exception e) {
-                    if (DEBUG) {
-                        Log.e(TAG, "[RenderRunnable.run] ", e);
-                    }
-                }
-            }
-            if (DEBUG) {
-                Log.d(TAG, "[RenderRunnable.run] render done***************************************");
-            }
-        }
-    }
-
-
     static final ThreadPoolExecutor downloadExecutor = new ThreadPoolExecutor(2, 4, 30, TimeUnit.SECONDS,
             new ArrayBlockingQueue<Runnable>(128), new ThreadFactory() {
 
@@ -157,15 +176,28 @@ public class MiPipeActivity extends Activity {
 
         @Override
         public Thread newThread(@NonNull Runnable r) {
-            String name = "thread " + count.getAndIncrement();
+            String name = "download " + count.getAndIncrement();
             if (DEBUG) {
-                Log.d(TAG, "[MiPipeActivity.newThread] " + name);
+                Log.d(TAG, "[download.newThread] " + name);
             }
             return new Thread(r, name);
         }
     }, new ThreadPoolExecutor.DiscardPolicy());
 
-    static final ArrayList<InputStream> tasks = new ArrayList<>();
+    static final ThreadPoolExecutor readExecutor = new ThreadPoolExecutor(2, 4, 30, TimeUnit.SECONDS,
+            new ArrayBlockingQueue<Runnable>(128), new ThreadFactory() {
+
+        AtomicInteger count = new AtomicInteger(0);
+
+        @Override
+        public Thread newThread(@NonNull Runnable r) {
+            String name = "read " + count.getAndIncrement();
+            if (DEBUG) {
+                Log.d(TAG, "[read.newThread] " + name);
+            }
+            return new Thread(r, name);
+        }
+    }, new ThreadPoolExecutor.DiscardPolicy());
 
 
     @Override
@@ -173,6 +205,7 @@ public class MiPipeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mi_piple);
 
-        new Thread(new RequestRunnable(), "request thread").start();
+        latch = new CountDownLatch(TASK_NUMBER);
+        new Thread(new RequestRunnable(), "request").start();
     }
 }
