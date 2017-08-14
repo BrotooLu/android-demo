@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="test-module"
-            android:value="MiPipeActivity"/>
+            android:value="ProgressBarActivity"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -26,6 +26,8 @@
         <activity android:name=".entry.DgActivity"/>
         <activity android:name=".entry.JsBridgeActivity"/>
         <activity android:name=".entry.MiPipeActivity">
+        </activity>
+        <activity android:name=".entry.ProgressBarActivity">
         </activity>
     </application>
 
