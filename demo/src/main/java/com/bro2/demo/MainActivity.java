@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.TextView;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
+import static com.bro2.demo.DemoEnv.DEMO_ENTRY_PKG_NAME;
 import static com.bro2.demo.DemoEnv.TAG;
 
 /**
@@ -44,7 +46,7 @@ public class MainActivity extends Activity {
         }
 
         try {
-            Intent intent = new Intent(this, Class.forName(getPackageName() + "." + dest));
+            Intent intent = new Intent(this, Class.forName(DEMO_ENTRY_PKG_NAME + "." + dest));
             startActivity(intent);
             finish();
         } catch (ClassNotFoundException e) {
@@ -52,6 +54,7 @@ public class MainActivity extends Activity {
                 Log.e(TAG, "", e);
             }
             setContentView(R.layout.activity_main);
+            ((TextView)findViewById(R.id.tv_module)).setText("No test module: " + dest);
         }
     }
 }

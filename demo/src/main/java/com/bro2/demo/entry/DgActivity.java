@@ -1,7 +1,9 @@
-package com.bro2.demo;
+package com.bro2.demo.entry;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.bro2.demo.R;
 
 public class DgActivity extends Activity {
 

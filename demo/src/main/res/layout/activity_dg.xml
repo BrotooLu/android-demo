@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bro2.demo.DgActivity">
+    tools:context="com.bro2.demo.entry.DgActivity">
 
     <com.bro2.b2lib.ui.DraggableVG
         android:layout_width="match_parent"

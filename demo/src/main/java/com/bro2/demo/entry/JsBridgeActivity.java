@@ -1,4 +1,4 @@
-package com.bro2.demo;
+package com.bro2.demo.entry;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+
+import com.bro2.demo.R;
 
 import java.io.IOException;
 import java.io.InputStream;

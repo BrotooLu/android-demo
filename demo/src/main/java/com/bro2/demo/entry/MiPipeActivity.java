@@ -1,9 +1,11 @@
-package com.bro2.demo;
+package com.bro2.demo.entry;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.bro2.demo.R;
 
 import java.io.IOException;
 import java.io.InputStream;

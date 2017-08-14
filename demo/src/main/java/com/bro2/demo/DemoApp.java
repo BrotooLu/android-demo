@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.bro2.b2lib.util.ReflectUtil;
+import com.bro2.demo.entry.DgActivity;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -95,7 +96,7 @@ public class DemoApp extends Application {
                 Log.d(TAG, "[MyClassLoader.loadClass] " + name);
             }
 
-            if ("com.bro2.demo.JsBridgeActivity".equals(name)) {
+            if ("com.bro2.demo.entry.JsBridgeActivity".equals(name)) {
                 return DgActivity.class;
             }
 

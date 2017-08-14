@@ -23,9 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".DgActivity"/>
-        <activity android:name=".JsBridgeActivity"/>
-        <activity android:name=".MiPipeActivity">
+        <activity android:name=".entry.DgActivity"/>
+        <activity android:name=".entry.JsBridgeActivity"/>
+        <activity android:name=".entry.MiPipeActivity">
         </activity>
     </application>
 
