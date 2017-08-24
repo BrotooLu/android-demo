@@ -7,5 +7,5 @@ package com.bro2.b2lib;
 
 public class B2LibEnv {
     public static final boolean DEBUG = BuildConfig.DEBUG;
-    public static final String TAG = "b2lib";
+    public static final String TAG_PREFIX = "b2lib_";
 }

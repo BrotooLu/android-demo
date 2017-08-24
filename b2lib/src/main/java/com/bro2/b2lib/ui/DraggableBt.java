@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.widget.Button;
 
 import static com.bro2.b2lib.B2LibEnv.DEBUG;
-import static com.bro2.b2lib.B2LibEnv.TAG;
+import static com.bro2.b2lib.B2LibEnv.TAG_PREFIX;
 
 /**
  * Created by Bro2 on 2017/6/4
@@ -36,7 +36,7 @@ public class DraggableBt extends Button {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (DEBUG) {
-            Log.d(TAG, "bt onTouchEvent: " + Code2H.hMotionEvent(event.getAction()));
+            Log.d(TAG_PREFIX, "bt onTouchEvent: " + Code2H.hMotionEvent(event.getAction()));
         }
         return super.onTouchEvent(event);
     }
@@ -44,7 +44,7 @@ public class DraggableBt extends Button {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (DEBUG) {
-            Log.d(TAG, "bt dispatchTouchEvent: " + Code2H.hMotionEvent(ev.getAction()));
+            Log.d(TAG_PREFIX, "bt dispatchTouchEvent: " + Code2H.hMotionEvent(ev.getAction()));
         }
         return super.dispatchTouchEvent(ev);
     }

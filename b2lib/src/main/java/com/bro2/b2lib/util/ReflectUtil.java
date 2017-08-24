@@ -8,7 +8,7 @@ import com.bro2.b2lib.B2Exception;
 import java.lang.reflect.Field;
 
 import static com.bro2.b2lib.B2LibEnv.DEBUG;
-import static com.bro2.b2lib.B2LibEnv.TAG;
+import static com.bro2.b2lib.B2LibEnv.TAG_PREFIX;
 
 /**
  * Created by Bro2 on 2017/7/12
@@ -17,13 +17,17 @@ import static com.bro2.b2lib.B2LibEnv.TAG;
 
 public class ReflectUtil {
 
-    private static Field getClassField(Class clazz, String field) {
+    public static Field getClassField(Class clazz, String field) {
+        if (clazz == null || TextUtils.isEmpty(field)) {
+            throw new B2Exception("neither class nor field can be null");
+        }
+
         Field f = null;
         try {
             f = clazz.getDeclaredField(field);
         } catch (NoSuchFieldException e) {
             if (DEBUG) {
-                Log.e(TAG, "[ReflectUtil.getClassField]", e);
+                Log.e(TAG_PREFIX, "[ReflectUtil.getClassField]", e);
             }
         }
 
@@ -126,7 +130,7 @@ public class ReflectUtil {
             return true;
         } catch (IllegalAccessException | NumberFormatException e) {
             if (DEBUG) {
-                Log.e(TAG, "[ReflectUtil.replaceField]", e);
+                Log.e(TAG_PREFIX, "[ReflectUtil.replaceField]", e);
             }
         } finally {
             if (!accessible) {
@@ -158,7 +162,7 @@ public class ReflectUtil {
         } catch (ClassNotFoundException e) {
             flag = false;
             if (DEBUG) {
-                Log.e(TAG, "[ReflectUtil.getClassOrNull]", e);
+                Log.e(TAG_PREFIX, "[ReflectUtil.getClassOrNull]", e);
             }
         }
 
@@ -200,7 +204,7 @@ public class ReflectUtil {
             return (T)(f.get(obj));
         } catch (IllegalAccessException e) {
             if (DEBUG) {
-                Log.e(TAG, "[ReflectUtil.getField]", e);
+                Log.e(TAG_PREFIX, "[ReflectUtil.getField]", e);
             }
         } finally {
             if (!accessible) {

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.bro2.b2lib.B2LibEnv.DEBUG;
-import static com.bro2.b2lib.B2LibEnv.TAG;
+import static com.bro2.b2lib.B2LibEnv.TAG_PREFIX;
 
 /**
  * Created by Bro2 on 2017/6/10
@@ -208,7 +208,7 @@ public class CRM {
                 .query(statement.uri, arr, selection, selectionArgs, order);
         if (cursor == null) {
             if (DEBUG) {
-                Log.d(TAG, "[CRM.fetchEntities] cursor is null");
+                Log.d(TAG_PREFIX, "[CRM.fetchEntities] cursor is null");
             }
             return list;
         }
@@ -271,7 +271,7 @@ public class CRM {
         }
 
         if (DEBUG) {
-            Log.d(TAG, "[CRM.fillEntity] no unique entity found: " + entities.size());
+            Log.d(TAG_PREFIX, "[CRM.fillEntity] no unique entity found: " + entities.size());
         }
         return new Pair<>(false, entity);
     }

@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.HashMap;
 
 import static com.bro2.b2lib.B2LibEnv.DEBUG;
-import static com.bro2.b2lib.B2LibEnv.TAG;
+import static com.bro2.b2lib.B2LibEnv.TAG_PREFIX;
 
 /**
  * Created by Bro2 on 2017/7/24
@@ -33,7 +33,7 @@ public class RWLock<T> {
                 int c = count - 1;
                 if (c < 0) {
                     if (DEBUG) {
-                        Log.e(TAG, "[RWLock.checkAndSetRead] invoke incorrectly");
+                        Log.e(TAG_PREFIX, "[RWLock.checkAndSetRead] invoke incorrectly");
                     }
                     c = 0;
                 }
@@ -70,22 +70,22 @@ public class RWLock<T> {
 
     public void dump() {
         if (DEBUG) {
-            Log.d(TAG, "[RWLock.dump] read flags: ");
+            Log.d(TAG_PREFIX, "[RWLock.dump] read flags: ");
         }
 
         for (T k : sReadFlag.keySet()) {
             if (DEBUG) {
-                Log.d(TAG, "key: " + k + " count: " + sReadFlag.get(k));
+                Log.d(TAG_PREFIX, "key: " + k + " count: " + sReadFlag.get(k));
             }
         }
 
         if (DEBUG) {
-            Log.d(TAG, "[RWLock.dump] write flags: ");
+            Log.d(TAG_PREFIX, "[RWLock.dump] write flags: ");
         }
 
         for (T k : sWriteFlag.keySet()) {
             if (DEBUG) {
-                Log.d(TAG, "key: " + k + " val: " + sWriteFlag.get(k));
+                Log.d(TAG_PREFIX, "key: " + k + " val: " + sWriteFlag.get(k));
             }
         }
     }

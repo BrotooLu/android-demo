@@ -37,6 +37,8 @@ public class DemoApp extends Application {
     private static final String HARD_CODE_M_PACKAGE_INFO = "mPackageInfo";
     private static final String HARD_CODE_M_CLASS_LOADER = "mClassLoader";
 
+    private static Application mApp;
+
     private static class MyHashMap<K, V> extends HashMap<K, V> {
         HashMap<K, V> map;
 
@@ -135,6 +137,8 @@ public class DemoApp extends Application {
         }
 
         super.attachBaseContext(base);
+
+        mApp = this;
     }
 
     @Override
@@ -144,5 +148,9 @@ public class DemoApp extends Application {
                     + this.getClassLoader().getClass().getName());
         }
         super.onCreate();
+    }
+
+    public static Application getApplication() {
+        return mApp;
     }
 }

@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="test-module"
-            android:value="ProgressBarActivity"/>
+            android:value="WebViewReuseActivity"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -28,6 +28,8 @@
         <activity android:name=".entry.MiPipeActivity">
         </activity>
         <activity android:name=".entry.ProgressBarActivity">
+        </activity>
+        <activity android:name=".entry.WebViewReuseActivity">
         </activity>
     </application>
 
