@@ -16,7 +16,7 @@ import com.bro2.demo.DemoApp;
 import com.bro2.demo.R;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
-import static com.bro2.demo.DemoEnv.TAG;
+import static com.bro2.demo.DemoEnv.TAG_PREFIX;
 
 public class WebViewReuseActivity extends Activity {
     private static WebViewPool mWebViewPool = new WebViewPool(DemoApp.getApplication(), 4,
@@ -36,7 +36,7 @@ public class WebViewReuseActivity extends Activity {
 
                             if (DEBUG) {
                                 now = System.currentTimeMillis();
-                                Log.d(TAG, "onPageStarted: " + now);
+                                Log.d(TAG_PREFIX, "onPageStarted: " + now);
                             }
                         }
 
@@ -44,7 +44,7 @@ public class WebViewReuseActivity extends Activity {
                         public void onPageFinished(WebView view, String url) {
                             if (DEBUG) {
                                 long duration = System.currentTimeMillis() - now;
-                                Log.d(TAG, "onPageFinished duration: " + duration + " " + url);
+                                Log.d(TAG_PREFIX, "onPageFinished duration: " + duration + " " + url);
                             }
 
                             super.onPageFinished(view, url);
@@ -67,14 +67,14 @@ public class WebViewReuseActivity extends Activity {
         long duration;
 
         if (DEBUG) {
-            Log.d(TAG, "[WebViewReuseActivity.onCreate] before: " + mWebView);
+            Log.d(TAG_PREFIX, "[WebViewReuseActivity.onCreate] before: " + mWebView);
         }
 
         mWebView = mWebViewPool.obtain(this);
         duration = System.currentTimeMillis() - now;
 
         if (DEBUG) {
-            Log.d(TAG, "[WebViewReuseActivity.onCreate] obtain duration: " + duration);
+            Log.d(TAG_PREFIX, "[WebViewReuseActivity.onCreate] obtain duration: " + duration);
         }
 
         now = System.currentTimeMillis();
@@ -83,7 +83,7 @@ public class WebViewReuseActivity extends Activity {
         duration = System.currentTimeMillis() - now;
 
         if (DEBUG) {
-            Log.d(TAG, "[WebViewReuseActivity.onCreate] view duration: " + duration);
+            Log.d(TAG_PREFIX, "[WebViewReuseActivity.onCreate] view duration: " + duration);
         }
     }
 
@@ -92,7 +92,7 @@ public class WebViewReuseActivity extends Activity {
         super.onStop();
 
         if (DEBUG) {
-            Log.d(TAG, "[WebViewReuseActivity.onStop] ...");
+            Log.d(TAG_PREFIX, "[WebViewReuseActivity.onStop] ...");
         }
     }
 
@@ -101,7 +101,7 @@ public class WebViewReuseActivity extends Activity {
         super.onDestroy();
 
         if (DEBUG) {
-            Log.e(TAG, "[WebViewReuseActivity.onDestroy]");
+            Log.e(TAG_PREFIX, "[WebViewReuseActivity.onDestroy]");
         }
 
         mWebViewPool.recycle(mWebView);

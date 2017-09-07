@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
 import static com.bro2.demo.DemoEnv.DEMO_ENTRY_PKG_NAME;
-import static com.bro2.demo.DemoEnv.TAG;
+import static com.bro2.demo.DemoEnv.TAG_PREFIX;
 
 /**
  * Created by Bro2 on 2017/6/4
@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
             dest = app.metaData.getString("test-module");
         } catch (PackageManager.NameNotFoundException e) {
             if (DEBUG) {
-                Log.e(TAG, "", e);
+                Log.e(TAG_PREFIX, "", e);
             }
         }
 
@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         }
 
         if (DEBUG) {
-            Log.d(TAG, "test-module:" + dest);
+            Log.d(TAG_PREFIX, "test-module:" + dest);
         }
 
         try {
@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
             finish();
         } catch (ClassNotFoundException e) {
             if (DEBUG) {
-                Log.e(TAG, "", e);
+                Log.e(TAG_PREFIX, "", e);
             }
             setContentView(R.layout.activity_main);
             ((TextView)findViewById(R.id.tv_module)).setText("No test module: " + dest);

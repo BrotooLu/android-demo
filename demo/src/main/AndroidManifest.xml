@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="test-module"
-            android:value="WebViewReuseActivity"/>
+            android:value="LocalSocketActivity"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -31,6 +31,13 @@
         </activity>
         <activity android:name=".entry.WebViewReuseActivity">
         </activity>
+        <activity android:name=".entry.LocalSocketActivity">
+        </activity>
+
+        <service
+            android:name=".localsocket.ClientService"
+            android:process=":sock">
+        </service>
     </application>
 
 </manifest>

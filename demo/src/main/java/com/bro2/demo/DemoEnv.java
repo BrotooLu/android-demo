@@ -7,7 +7,7 @@ package com.bro2.demo;
 
 public class DemoEnv {
     public static final boolean DEBUG = BuildConfig.DEBUG;
-    public static final String TAG = "b2demo";
+    public static final String TAG_PREFIX = "b2demo_";
 
     public static final String DEMO_ENTRY_PKG_NAME = "com.bro2.demo.entry";
 

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
-import static com.bro2.demo.DemoEnv.TAG;
+import static com.bro2.demo.DemoEnv.TAG_PREFIX;
 
 public class MiPipeActivity extends Activity {
 
@@ -48,13 +48,13 @@ public class MiPipeActivity extends Activity {
                 }
 
                 if (DEBUG) {
-                    Log.e(TAG, "[ReadRunnable.run] read done id: " + id + " content: " + msg);
+                    Log.e(TAG_PREFIX, "[ReadRunnable.run] read done id: " + id + " content: " + msg);
                 }
 
                 latch.countDown();
             } catch (Exception e) {
                 if (DEBUG) {
-                    Log.e(TAG, "[ReadRunnable.run] ", e);
+                    Log.e(TAG_PREFIX, "[ReadRunnable.run] ", e);
                 }
             }
         }
@@ -80,7 +80,7 @@ public class MiPipeActivity extends Activity {
         public void run() {
             try {
                 if (DEBUG) {
-                    Log.d(TAG, "[WriteRunnable.run] start write:" + id + ">>>>>>>>>>>>>>>>>>>>>>>");
+                    Log.d(TAG_PREFIX, "[WriteRunnable.run] start write:" + id + ">>>>>>>>>>>>>>>>>>>>>>>");
                 }
                 int random = (int) (Math.random() * 1000);
                 Thread.sleep(random);
@@ -101,12 +101,12 @@ public class MiPipeActivity extends Activity {
                 callback.onData(id, buffer, buffer.length);
 
                 if (DEBUG) {
-                    Log.d(TAG, "[WriteRunnable.run] write done " + writeMsg);
+                    Log.d(TAG_PREFIX, "[WriteRunnable.run] write done " + writeMsg);
                 }
                 callback.onFinish(id);
             } catch (Exception e) {
                 if (DEBUG) {
-                    Log.e(TAG, "[WriteRunnable.run] ", e);
+                    Log.e(TAG_PREFIX, "[WriteRunnable.run] ", e);
                 }
             }
         }
@@ -128,7 +128,7 @@ public class MiPipeActivity extends Activity {
                                 out.write(buffer, 0, len);
                             } catch (IOException e) {
                                 if (DEBUG) {
-                                    Log.e(TAG, "[RequestRunnable.onData] ", e);
+                                    Log.e(TAG_PREFIX, "[RequestRunnable.onData] ", e);
                                 }
                             }
                         }
@@ -138,11 +138,11 @@ public class MiPipeActivity extends Activity {
                             try {
                                 out.close();
                                 if (DEBUG) {
-                                    Log.d(TAG, "[RequestRunnable.onFinish] id: " + id);
+                                    Log.d(TAG_PREFIX, "[RequestRunnable.onFinish] id: " + id);
                                 }
                             } catch (IOException e) {
                                 if (DEBUG) {
-                                    Log.e(TAG, "[RequestRunnable.onFinish] ", e);
+                                    Log.e(TAG_PREFIX, "[RequestRunnable.onFinish] ", e);
                                 }
                             }
                         }
@@ -151,7 +151,7 @@ public class MiPipeActivity extends Activity {
                 }
 
                 if (DEBUG) {
-                    Log.e(TAG, "[RequestRunnable.run] request over, start render#################");
+                    Log.e(TAG_PREFIX, "[RequestRunnable.run] request over, start render#################");
                 }
 
                 for (int i = 0; i < TASK_NUMBER; ++i) {
@@ -161,11 +161,11 @@ public class MiPipeActivity extends Activity {
                 latch.await();
 
                 if (DEBUG) {
-                    Log.e(TAG, "[RequestRunnable.run] render over################################");
+                    Log.e(TAG_PREFIX, "[RequestRunnable.run] render over################################");
                 }
             } catch (Exception e) {
                 if (DEBUG) {
-                    Log.e(TAG, "[RequestRunnable.run] ", e);
+                    Log.e(TAG_PREFIX, "[RequestRunnable.run] ", e);
                 }
             }
         }
@@ -180,7 +180,7 @@ public class MiPipeActivity extends Activity {
         public Thread newThread(@NonNull Runnable r) {
             String name = "download " + count.getAndIncrement();
             if (DEBUG) {
-                Log.d(TAG, "[download.newThread] " + name);
+                Log.d(TAG_PREFIX, "[download.newThread] " + name);
             }
             return new Thread(r, name);
         }
@@ -195,7 +195,7 @@ public class MiPipeActivity extends Activity {
         public Thread newThread(@NonNull Runnable r) {
             String name = "read " + count.getAndIncrement();
             if (DEBUG) {
-                Log.d(TAG, "[read.newThread] " + name);
+                Log.d(TAG_PREFIX, "[read.newThread] " + name);
             }
             return new Thread(r, name);
         }

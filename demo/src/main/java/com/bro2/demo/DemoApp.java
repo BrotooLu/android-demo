@@ -18,7 +18,7 @@ import static com.bro2.demo.DemoEnv.DEBUG;
 import static com.bro2.demo.DemoEnv.SWITCH_HOOK_AMS;
 import static com.bro2.demo.DemoEnv.SWITCH_HOOK_CLASS_LOADER;
 import static com.bro2.demo.DemoEnv.SWITCH_HOOK_SM_CACHE;
-import static com.bro2.demo.DemoEnv.TAG;
+import static com.bro2.demo.DemoEnv.TAG_PREFIX;
 
 /**
  * Created by Bro2 on 2017/6/4
@@ -50,7 +50,7 @@ public class DemoApp extends Application {
         public V get(Object key) {
             V v = map.get(key);
             if (DEBUG) {
-                Log.d(TAG, "[MyHashMap.get] key: " + key + " val: " + v);
+                Log.d(TAG_PREFIX, "[MyHashMap.get] key: " + key + " val: " + v);
             }
             return v;
         }
@@ -59,7 +59,7 @@ public class DemoApp extends Application {
         public V put(K key, V value) {
             V v = map.put(key, value);
             if (DEBUG) {
-                Log.d(TAG, "[MyHashMap.put] key : " + key + " val: " + value);
+                Log.d(TAG_PREFIX, "[MyHashMap.put] key : " + key + " val: " + value);
             }
             return v;
         }
@@ -76,7 +76,7 @@ public class DemoApp extends Application {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (DEBUG) {
                 // proxy会导致崩溃
-                Log.d(TAG, "[MyAMP.invoke] method: " + method.getName() + " args: "
+                Log.d(TAG_PREFIX, "[MyAMP.invoke] method: " + method.getName() + " args: "
                         + (args == null ? "null" : Arrays.asList(args))
                         /*+ " proxy: " + proxy*/ + " ori: " + original);
             }
@@ -95,7 +95,7 @@ public class DemoApp extends Application {
         @Override
         public Class<?> loadClass(String name) throws ClassNotFoundException {
             if (DEBUG) {
-                Log.d(TAG, "[MyClassLoader.loadClass] " + name);
+                Log.d(TAG_PREFIX, "[MyClassLoader.loadClass] " + name);
             }
 
             if ("com.bro2.demo.entry.JsBridgeActivity".equals(name)) {
@@ -113,7 +113,7 @@ public class DemoApp extends Application {
             HashMap<String, IBinder> cache = ReflectUtil.getStaticField(HARD_CODE_SM, HARD_CODE_S_CACHE);
             for (String k : cache.keySet()) {
                 if (DEBUG) {
-                    Log.d(TAG, "[DemoApp.attachBaseContext] now cache, k: " + k + " val: " + cache.get(k));
+                    Log.d(TAG_PREFIX, "[DemoApp.attachBaseContext] now cache, k: " + k + " val: " + cache.get(k));
                 }
             }
             MyHashMap<String, IBinder> my = new MyHashMap<>(cache);
@@ -144,7 +144,7 @@ public class DemoApp extends Application {
     @Override
     public void onCreate() {
         if (DEBUG) {
-            Log.d(TAG, "[DemoApp.attachBaseContext] class loader: "
+            Log.d(TAG_PREFIX, "[DemoApp.attachBaseContext] class loader: "
                     + this.getClassLoader().getClass().getName());
         }
         super.onCreate();

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static com.bro2.demo.DemoEnv.DEBUG;
-import static com.bro2.demo.DemoEnv.TAG;
+import static com.bro2.demo.DemoEnv.TAG_PREFIX;
 
 public class JsBridgeActivity extends Activity {
     private WebView mWebView;
@@ -50,7 +50,7 @@ public class JsBridgeActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (DEBUG) {
-                    Log.d(TAG, "shouldOverrideUrlLoading: " + url);
+                    Log.d(TAG_PREFIX, "shouldOverrideUrlLoading: " + url);
                 }
                 return super.shouldOverrideUrlLoading(view, url);
             }
@@ -58,7 +58,7 @@ public class JsBridgeActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 if (DEBUG) {
-                    Log.d(TAG, "shouldOverrideUrlLoading1: " + request.getUrl());
+                    Log.d(TAG_PREFIX, "shouldOverrideUrlLoading1: " + request.getUrl());
                 }
                 return super.shouldOverrideUrlLoading(view, request);
             }
@@ -66,19 +66,19 @@ public class JsBridgeActivity extends Activity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
                 if (DEBUG) {
-                    Log.d(TAG, "shouldInterceptRequest: old " + url);
+                    Log.d(TAG_PREFIX, "shouldInterceptRequest: old " + url);
                 }
 
                 if (url.contains("avatars3.githubusercontent.com")) {
                     if (DEBUG) {
-                        Log.d(TAG, "shouldInterceptRequest: redirect");
+                        Log.d(TAG_PREFIX, "shouldInterceptRequest: redirect");
                     }
                     InputStream input = null;
                     try {
                         input = getAssets().open("ic_launcher.png");
                     } catch (IOException e) {
                         if (DEBUG) {
-                            Log.e(TAG, "shouldInterceptRequest", e);
+                            Log.e(TAG_PREFIX, "shouldInterceptRequest", e);
                         }
                     }
 
@@ -91,7 +91,7 @@ public class JsBridgeActivity extends Activity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 if (DEBUG) {
-                    Log.d(TAG, "shouldInterceptRequest: " + request.getUrl());
+                    Log.d(TAG_PREFIX, "shouldInterceptRequest: " + request.getUrl());
                 }
                 return super.shouldInterceptRequest(view, request);
             }
