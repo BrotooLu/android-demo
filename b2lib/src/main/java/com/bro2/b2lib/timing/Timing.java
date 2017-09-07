@@ -6,19 +6,19 @@ package com.bro2.b2lib.timing;
 
 public final class Timing {
 
-    private static final ThreadLocal<ITimingClerks> sThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<ITimingClerk> sThreadLocal = new ThreadLocal<>();
 
-    public static boolean prepareClerks(ITimingClerks timingClerks) {
-        ITimingClerks clerks = sThreadLocal.get();
-        if (clerks != null) {
+    public static boolean prepareClerk(ITimingClerk timingClerk) {
+        ITimingClerk clerk = sThreadLocal.get();
+        if (clerk != null) {
             return false;
         }
 
-        sThreadLocal.set(timingClerks);
+        sThreadLocal.set(timingClerk);
         return true;
     }
 
-    public static ITimingClerks getTimingClerks() {
+    public static ITimingClerk getTimingClerk() {
         return sThreadLocal.get();
     }
 

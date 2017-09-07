@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by Bro2 on 2017/9/6
  */
 
-class AverageClerks implements ITimingClerks {
+class AverageClerk implements ITimingClerk {
 
     private static class Record {
         long lastStart;
