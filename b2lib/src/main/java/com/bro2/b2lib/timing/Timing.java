@@ -18,8 +18,32 @@ public final class Timing {
         return true;
     }
 
-    public static ITimingClerk getTimingClerk() {
-        return sThreadLocal.get();
+    public static void enter(Marker marker) {
+        ITimingClerk clerk = sThreadLocal.get();
+        if (clerk != null) {
+            clerk.enter(marker);
+        }
     }
 
+    public static void leave(Marker marker) {
+        ITimingClerk clerk = sThreadLocal.get();
+        if (clerk != null) {
+            clerk.leave(marker);
+        }
+    }
+
+    public static String dump() {
+        ITimingClerk clerk = sThreadLocal.get();
+        if (clerk != null) {
+            return clerk.dump();
+        }
+        return "";
+    }
+
+    public static void clear() {
+        ITimingClerk clerk = sThreadLocal.get();
+        if (clerk != null) {
+            clerk.clear();
+        }
+    }
 }

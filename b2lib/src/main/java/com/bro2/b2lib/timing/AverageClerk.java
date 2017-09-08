@@ -2,6 +2,9 @@ package com.bro2.b2lib.timing;
 
 import android.os.SystemClock;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +12,7 @@ import java.util.Map;
  * Created by Bro2 on 2017/9/6
  */
 
-class AverageClerk implements ITimingClerk {
+public class AverageClerk implements ITimingClerk {
 
     private static class Record {
         long lastStart;
@@ -30,8 +33,17 @@ class AverageClerk implements ITimingClerk {
         }
     }
 
+    private static final Comparator<Map.Entry<Marker, Record>> sComparator =
+            new Comparator<Map.Entry<Marker, Record>>() {
+                @Override
+                public int compare(Map.Entry<Marker, Record> o1, Map.Entry<Marker, Record> o2) {
+                    return o1.getKey().compareTo(o2.getKey());
+                }
+            };
+
     private final Map<Marker, Record> mStatMap = new HashMap<>();
 
+    @Override
     public void enter(Marker marker) {
         if (marker == null) {
             return;
@@ -47,6 +59,7 @@ class AverageClerk implements ITimingClerk {
         record.enterFlag = true;
     }
 
+    @Override
     public void leave(Marker marker) {
         if (marker == null) {
             return;
@@ -65,11 +78,13 @@ class AverageClerk implements ITimingClerk {
     @Override
     public String dump() {
         StringBuilder dump = new StringBuilder();
-        for (Map.Entry<Marker, Record> entry : mStatMap.entrySet()) {
+        ArrayList<Map.Entry<Marker, Record>> entries = new ArrayList<>(mStatMap.entrySet());
+        Collections.sort(entries, sComparator);
+        for (Map.Entry<Marker, Record> entry : entries) {
             Marker key = entry.getKey();
             Record val = entry.getValue();
             dump.append(key);
-            dump.append("\n");
+            dump.append("\n\t");
             dump.append(val);
             dump.append("\n");
         }

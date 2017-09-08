@@ -6,16 +6,18 @@ import android.text.TextUtils;
  * Created by Bro2 on 2017/9/6
  */
 
-public class Marker {
+public class Marker implements Comparable<Marker> {
     private final String mId;
     private final Object mAttachment;
+    private final int mPriority;
 
-    public Marker(String id) {
-        this(id, null);
+    public Marker(String id, int priority) {
+        this(id, priority, null);
     }
 
-    public Marker(String id, Object attachment) {
+    public Marker(String id, int priority, Object attachment) {
         mId = id;
+        mPriority = priority;
         mAttachment = attachment;
     }
 
@@ -60,5 +62,10 @@ public class Marker {
         builder.append(" Attachment: ");
         builder.append(mAttachment);
         return builder.toString();
+    }
+
+    @Override
+    public int compareTo(Marker o) {
+        return mPriority - o.mPriority;
     }
 }
