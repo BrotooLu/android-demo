@@ -25,13 +25,13 @@ public class ClientService extends Service {
 
     LocalSocket mSocket;
     OutputStream mOs;
+    InputStream mIn;
 
     public ClientService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -46,69 +46,42 @@ public class ClientService extends Service {
             return super.onStartCommand(null, flags, startId);
         }
 
-        if (mSocket == null || !mSocket.isConnected()) {
-            String server = intent.getStringExtra(KEY_SERVER_NAME);
-            mSocket = new LocalSocket();
-            LocalSocketAddress address = new LocalSocketAddress(server);
-            try {
-                if (DEBUG) {
-                    Log.d(TAG, "[ClientService.onStartCommand] start connect");
-                }
-                mSocket.connect(address);
-                if (DEBUG) {
-                    Log.d(TAG, "[ClientService.onStartCommand] connected");
-                }
-                mOs = mSocket.getOutputStream();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputStream in = null;
-                        try {
-                            in = mSocket.getInputStream();
-                            byte[] buffer = new byte[1024];
-                            int read;
-                            while ((read = in.read(buffer, 0, buffer.length)) != -1) {
-                                if (DEBUG) {
-                                    Log.d(TAG, "[ClientService.run] server: " + new String(buffer, 0, read));
-                                }
-                            }
-                            if (DEBUG) {
-                                Log.d(TAG, "[ClientService.run] client: -1 received");
-                            }
-                            in.close();
-                            mSocket.close();
-                        } catch (Exception e) {
-                            if (DEBUG) {
-                                Log.e(TAG, "[ClientService.run] ", e);
-                            }
-                        } finally {
-                            try {
-                                if (in != null) {
-                                    in.close();
-                                }
-
-                                if(mSocket != null) {
-                                    mSocket.close();
-                                }
-                            } catch (IOException e) {
-                                if (DEBUG) {
-                                    Log.e(TAG, "[ClientService.run] ", e);
-                                }
-                            }
-                        }
-                    }
-                }, "client").start();
-            } catch (Exception e) {
-                if (DEBUG) {
-                    Log.e(TAG, "[ClientService.onStartCommand] ", e);
-                }
-            }
-        }
-
         int cmd = intent.getIntExtra(KEY_COMMAND, CMD_SEND_MSG);
         try {
             if (cmd == CMD_SEND_MSG) {
+                if (mSocket == null || !mSocket.isConnected()) {
+                    if (DEBUG) {
+                        Log.d(TAG, "[ClientService.onStartCommand] start connect");
+                    }
+                    String server = intent.getStringExtra(KEY_SERVER_NAME);
+                    mSocket = new LocalSocket();
+                    LocalSocketAddress address = new LocalSocketAddress(server);
+                    try {
+                        mSocket.connect(address);
+                        if (DEBUG) {
+                            Log.d(TAG, "[ClientService.onStartCommand] connected");
+                        }
+                        mOs = mSocket.getOutputStream();
+                        mIn = mSocket.getInputStream();
+                    } catch (Exception e) {
+                        if (DEBUG) {
+                            Log.e(TAG, "[ClientService.onStartCommand] ", e);
+                        }
+                    }
+                }
+
+                byte[] buffer = new byte[1024];
+                int read = mIn.available();
+                if (read > 0) {
+                    read = mIn.read(buffer, 0, read);
+                    if (DEBUG) {
+                        if (read > 0) {
+                            Log.d(TAG, "server: " + new String(buffer, 0, read));
+                        } else {
+                            Log.d(TAG, "no msg from server");
+                        }
+                    }
+                }
                 mOs.write("hello, server".getBytes());
             } else if (cmd == CMD_STOP) {
                 if (DEBUG) {

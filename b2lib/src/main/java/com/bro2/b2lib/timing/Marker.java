@@ -11,6 +11,10 @@ public class Marker implements Comparable<Marker> {
     private final Object mAttachment;
     private final int mPriority;
 
+    public Marker(String id) {
+        this(id, 0, null);
+    }
+
     public Marker(String id, int priority) {
         this(id, priority, null);
     }

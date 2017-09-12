@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.bro2.b2lib.timing.AverageClerk;
+import com.bro2.b2lib.timing.Timing;
 import com.bro2.b2lib.util.ReflectUtil;
 import com.bro2.demo.entry.DgActivity;
 
@@ -148,6 +150,8 @@ public class DemoApp extends Application {
                     + this.getClassLoader().getClass().getName());
         }
         super.onCreate();
+
+        Timing.prepareClerk(new AverageClerk());
     }
 
     public static Application getApplication() {

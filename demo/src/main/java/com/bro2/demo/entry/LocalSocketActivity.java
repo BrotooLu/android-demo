@@ -5,18 +5,26 @@ import android.content.Intent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.bro2.demo.R;
 import com.bro2.demo.localsocket.ClientService;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.bro2.demo.DemoEnv.DEBUG;
+import static com.bro2.demo.DemoEnv.TAG_PREFIX;
+
 public class LocalSocketActivity extends Activity implements View.OnClickListener {
     public static final String SERVER_NAME = "sock_server";
+
+    private static final String TAG = TAG_PREFIX + "socket_server";
 
     private static final String WHO_SERVER = "server";
     private static final String WHO_CLIENT = "client";
@@ -26,7 +34,6 @@ public class LocalSocketActivity extends Activity implements View.OnClickListene
     private ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     LocalServerSocket mSocket;
-    InputStream mIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,48 +81,45 @@ public class LocalSocketActivity extends Activity implements View.OnClickListene
     private void startServer() {
         try {
             mSocket = new LocalServerSocket(SERVER_NAME);
-            mExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
+        } catch (Exception e) {
+            appendStatus(WHO_SERVER, e.toString());
+            return;
+        }
+
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean flag = Thread.currentThread().isInterrupted();
+                while (!flag) {
                     LocalSocket client = null;
+                    InputStream mIn = null;
                     try {
-                        while (true) {
-                            appendStatus(WHO_SERVER, "start accept");
-                            client = mSocket.accept();
-                            appendStatus(WHO_SERVER, "handle client");
-                            mIn = client.getInputStream();
-                            byte[] buffer = new byte[1024];
-                            int read;
-                            while ((read = mIn.read(buffer, 0, buffer.length)) != -1) {
-                                appendStatus(WHO_CLIENT, new String(buffer, 0, read));
-                            }
-                            appendStatus(WHO_SERVER, "-1 received");
-                            mIn.close();
-                            client.close();
+                        appendStatus(WHO_SERVER, "start accept");
+                        client = mSocket.accept();
+                        mIn = client.getInputStream();
+                        byte[] buffer = new byte[1024];
+                        int read;
+                        while ((read = mIn.read(buffer, 0, buffer.length)) != -1) {
+                            appendStatus(WHO_CLIENT, new String(buffer, 0, read));
                         }
+                        flag = Thread.currentThread().isInterrupted();
+                        appendStatus(WHO_SERVER, "closed client");
                     } catch (Exception e) {
                         appendStatus(WHO_SERVER, e.toString());
                     } finally {
-                        try {
-                            if (mIn != null) {
-                                mIn.close();
-                            }
-                            if (client != null) {
-                                client.close();
-                            }
-
-                            mSocket.close();
-                        } catch (Exception e) {
-                            appendStatus(WHO_SERVER, e.toString());
-                        }
+                        close(mIn);
+                        close(client);
                     }
-
-                    appendStatus(WHO_SERVER, "closed");
                 }
-            });
-        } catch (Exception e) {
-            appendStatus(WHO_SERVER, e.toString());
-        }
+
+                appendStatus(WHO_SERVER, "start close server");
+                try {
+                    mSocket.close();
+                } catch (Exception e) {
+                    appendStatus(WHO_SERVER, e.toString());
+                }
+            }
+        });
     }
 
     private void stopServer() {
@@ -133,4 +137,17 @@ public class LocalSocketActivity extends Activity implements View.OnClickListene
         service.putExtra(ClientService.KEY_COMMAND, ClientService.CMD_STOP);
         startService(service);
     }
+
+    private void close(Closeable close) {
+        if (close != null) {
+            try {
+                close.close();
+            } catch (IOException e) {
+                if (DEBUG) {
+                    Log.e(TAG, "[LocalSocketActivity.close] ", e);
+                }
+            }
+        }
+    }
+
 }
