@@ -44,3 +44,5 @@ captures/
 .DS_Store/
 libs/
 obj/
+
+.externalNativeBuild/

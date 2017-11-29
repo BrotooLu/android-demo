@@ -1,6 +1,6 @@
-.global detectArm
+.global detect_arm
 
-detectArm:
+detect_arm:
     PUSH { R4, R5, R6, R7, LR }
     MOV R7, #0
     MOV R6, PC

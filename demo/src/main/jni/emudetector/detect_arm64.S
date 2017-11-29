@@ -1,6 +1,6 @@
-.global detectArm
+.global detect_arm
 
-detectArm:
+detect_arm:
     SUB SP, SP, #0x40
     STP X4, X5, [SP, #0x10]
     STP X6, X7, [SP, #0x20]
