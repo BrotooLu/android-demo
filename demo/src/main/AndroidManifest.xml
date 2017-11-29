@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="test-module"
-            android:value="LocalSocketActivity"/>
+            android:value="JsBridgeActivity"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

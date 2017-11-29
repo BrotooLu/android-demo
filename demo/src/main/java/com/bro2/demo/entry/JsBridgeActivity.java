@@ -40,6 +40,9 @@ public class JsBridgeActivity extends Activity {
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
+                if (DEBUG) {
+                    Log.d(TAG_PREFIX, "[JsBridgeActivity.onJsPrompt], message: " + message);
+                }
                 mWebResult.setText("url: " + url + " message: " + message + " default: " + defaultValue);
                 result.confirm("done js prompt");
                 return true;
@@ -116,6 +119,9 @@ public class JsBridgeActivity extends Activity {
 
         @JavascriptInterface
         String setText(final String txt) {
+            if (DEBUG) {
+                Log.d(TAG_PREFIX, "[JsBridge.setText] message:" + txt);
+            }
             mWebResult.post(new Runnable() {
                 @Override
                 public void run() {
