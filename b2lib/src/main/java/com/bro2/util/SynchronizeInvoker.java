@@ -1,4 +1,4 @@
-package com.bro2.b2lib.util;
+package com.bro2.util;
 
 import android.os.Handler;
 

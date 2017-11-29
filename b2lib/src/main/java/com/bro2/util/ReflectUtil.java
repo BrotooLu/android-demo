@@ -1,9 +1,9 @@
-package com.bro2.b2lib.util;
+package com.bro2.util;
 
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bro2.b2lib.B2Exception;
+import com.bro2.exception.B2Exception;
 
 import java.lang.reflect.Field;
 

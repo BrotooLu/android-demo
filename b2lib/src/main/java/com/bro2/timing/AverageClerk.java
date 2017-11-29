@@ -1,4 +1,4 @@
-package com.bro2.b2lib.timing;
+package com.bro2.timing;
 
 import android.os.SystemClock;
 

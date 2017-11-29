@@ -5,9 +5,9 @@ import android.content.Context;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.bro2.b2lib.timing.AverageClerk;
-import com.bro2.b2lib.timing.Timing;
-import com.bro2.b2lib.util.ReflectUtil;
+import com.bro2.timing.AverageClerk;
+import com.bro2.timing.Timing;
+import com.bro2.util.ReflectUtil;
 import com.bro2.demo.entry.DgActivity;
 
 import java.lang.reflect.InvocationHandler;

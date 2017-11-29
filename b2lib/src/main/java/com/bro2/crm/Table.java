@@ -1,4 +1,4 @@
-package com.bro2.b2lib.crm;
+package com.bro2.crm;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

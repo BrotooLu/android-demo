@@ -1,6 +1,6 @@
 package com.bro2.b2lib;
 
-import com.bro2.b2lib.util.ReflectUtil;
+import com.bro2.util.ReflectUtil;
 
 import org.junit.Test;
 

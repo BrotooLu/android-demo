@@ -1,4 +1,4 @@
-package com.bro2.b2lib;
+package com.bro2.exception;
 
 import android.annotation.TargetApi;
 import android.os.Build;

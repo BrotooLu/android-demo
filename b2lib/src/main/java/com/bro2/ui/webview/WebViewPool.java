@@ -1,4 +1,4 @@
-package com.bro2.b2lib.webviewpool;
+package com.bro2.ui.webview;
 
 import android.app.Application;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.webkit.WebView;
 
-import com.bro2.b2lib.B2Exception;
+import com.bro2.exception.B2Exception;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;

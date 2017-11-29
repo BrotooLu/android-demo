@@ -1,4 +1,4 @@
-package com.bro2.b2lib.ui;
+package com.bro2.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;

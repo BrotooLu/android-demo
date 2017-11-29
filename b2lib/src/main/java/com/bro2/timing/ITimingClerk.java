@@ -1,4 +1,4 @@
-package com.bro2.b2lib.timing;
+package com.bro2.timing;
 
 /**
  * Created by Bro2 on 2017/9/6

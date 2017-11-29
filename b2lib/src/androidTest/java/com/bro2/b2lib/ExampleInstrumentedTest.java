@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.bro2.b2lib.util.DeviceInfo;
-import com.bro2.b2lib.util.UriUtil;
+import com.bro2.util.DeviceInfo;
+import com.bro2.util.UriUtil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

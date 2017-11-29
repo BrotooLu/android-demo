@@ -1,12 +1,12 @@
-package com.bro2.b2lib.webviewpool;
+package com.bro2.ui.webview;
 
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.util.Log;
 
-import com.bro2.b2lib.B2Exception;
+import com.bro2.exception.B2Exception;
 import com.bro2.b2lib.B2LibEnv;
-import com.bro2.b2lib.util.ReflectUtil;
+import com.bro2.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 

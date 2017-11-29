@@ -1,8 +1,8 @@
 package com.bro2.b2lib;
 
-import com.bro2.b2lib.timing.AverageClerk;
-import com.bro2.b2lib.timing.Marker;
-import com.bro2.b2lib.timing.Timing;
+import com.bro2.timing.AverageClerk;
+import com.bro2.timing.Marker;
+import com.bro2.timing.Timing;
 
 import org.junit.Before;
 import org.junit.Test;

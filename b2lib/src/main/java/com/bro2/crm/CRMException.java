@@ -1,4 +1,4 @@
-package com.bro2.b2lib.crm;
+package com.bro2.crm;
 
 /**
  * Created by Bro2 on 2017/6/10

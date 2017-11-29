@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.bro2.b2lib.webviewpool.WebViewPool;
+import com.bro2.ui.webview.WebViewPool;
 import com.bro2.demo.DemoApp;
 import com.bro2.demo.R;
 

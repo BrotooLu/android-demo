@@ -1,6 +1,6 @@
 package com.bro2.b2lib;
 
-import com.bro2.b2lib.util.RWLock;
+import com.bro2.util.RWLock;
 
 import org.junit.Before;
 import org.junit.Test;
