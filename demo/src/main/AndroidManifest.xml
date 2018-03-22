@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.bro2.demo">
+    package="com.bro2.demo">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".DemoApp"
@@ -12,32 +12,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="test-module"
-            android:value="JsBridgeActivity"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".entry.DgActivity"/>
-        <activity android:name=".entry.JsBridgeActivity"/>
-        <activity android:name=".entry.MiPipeActivity">
-        </activity>
-        <activity android:name=".entry.ProgressBarActivity">
-        </activity>
-        <activity android:name=".entry.WebViewReuseActivity">
-        </activity>
-        <activity android:name=".entry.LocalSocketActivity">
-        </activity>
+
+        <activity android:name=".entry.DgActivity" />
+
+        <activity android:name=".entry.JsBridgeActivity" />
+
+        <activity android:name=".entry.MiPipeActivity" />
+
+        <activity android:name=".entry.ProgressBarActivity" />
+
+        <activity android:name=".entry.WebViewReuseActivity" />
+
+        <activity android:name=".entry.LocalSocketActivity" />
 
         <service
             android:name=".localsocket.ClientService"
-            android:process=":sock">
-        </service>
+            android:process=":sock" />
     </application>
 
 </manifest>

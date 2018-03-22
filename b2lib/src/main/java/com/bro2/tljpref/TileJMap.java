@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created by Brotoo on 15/01/2018.
  */
 
-@Target(ElementType.TYPE.FIELD)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TileJMap {
 
