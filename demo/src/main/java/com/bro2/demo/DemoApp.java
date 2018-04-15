@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.bro2.ehook.EHook;
 import com.bro2.timing.AverageClerk;
 import com.bro2.timing.Timing;
 import com.bro2.util.ReflectUtil;
@@ -152,6 +153,8 @@ public class DemoApp extends Application {
         super.onCreate();
 
         Timing.prepareClerk(new AverageClerk());
+
+        EHook.registerHandler(null, null, null);
     }
 
     public static Application getApplication() {

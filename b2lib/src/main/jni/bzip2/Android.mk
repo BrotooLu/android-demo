@@ -5,6 +5,7 @@ LOCAL_PATH := $(call my-dir)
 ####################################################
 include $(CLEAR_VARS)
 
+LOCAL_CFLAGS += -Werror
 LOCAL_MODULE := bzip
 LOCAL_SRC_FILES := blocksort.c \
     huffman.c \

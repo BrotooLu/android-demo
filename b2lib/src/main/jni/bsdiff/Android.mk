@@ -7,6 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../bzip2
 LOCAL_LDFLAGS += -pie
+LOCAL_CFLAGS += -Werror
 
 LOCAL_MODULE := bsdiff
 LOCAL_SRC_FILES := bsdiff.c
@@ -21,6 +22,7 @@ include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../bzip2
 LOCAL_LDFLAGS += -pie
+LOCAL_CFLAGS += -Werror
 
 LOCAL_MODULE := bspatch
 LOCAL_SRC_FILES := bspatch.c

@@ -14,5 +14,6 @@ else
 endif
 
 LOCAL_LDFLAGS += -pie
+LOCAL_CFLAGS += -Werror
 
 include $(BUILD_EXECUTABLE)
