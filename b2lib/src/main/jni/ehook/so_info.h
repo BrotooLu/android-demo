@@ -80,15 +80,15 @@ struct SoInfo {
     linker_function_t fini_func;
 };
 
-struct link_map {
+struct LinkMap {
     ElfW(Addr) l_addr;
     char *l_name;
     ElfW(Dyn) *l_ld;
-    struct link_map *l_next;
-    struct link_map *l_prev;
+    struct LinkMap *l_next;
+    struct LinkMap *l_prev;
 };
 
-struct so_info_android6_64 {
+struct SoInfo64Android6 {
     const ElfW(Phdr) *phdr;
     size_t phnum;
     ElfW(Addr) entry;
@@ -97,7 +97,7 @@ struct so_info_android6_64 {
 
     ElfW(Dyn) *dynamic;
 
-    struct so_info_android6_64 *next;
+    struct SoInfo64Android6 *next;
     unsigned flags;
 
     const char *strtab;
@@ -134,7 +134,12 @@ struct so_info_android6_64 {
     uint32_t mips_gotsym_;
 #endif
     size_t ref_count_;
-    struct link_map link_map_head;
+    struct LinkMap link_map_head;
+};
+
+union PUnionSoInfo {
+    struct SoInfo *p_so;
+    struct SoInfo64Android6 *p_so64;
 };
 
 #endif //EHOOK_SOINFO_H

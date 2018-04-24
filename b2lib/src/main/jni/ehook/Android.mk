@@ -6,7 +6,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS += -Werror
+#LOCAL_CFLAGS += -Werror
 
 ifeq ($(NDK_DEBUG), 1)
     LOCAL_LDFLAGS += -llog
@@ -16,7 +16,9 @@ endif
 LOCAL_MODULE := ehook
 LOCAL_SRC_FILES := lib_ehook.cpp\
     ehook.cpp\
-    elf_reader.cpp
+    elf_reader.cpp\
+    os_symbol.cpp\
+    map_reader.cpp
 
 
 include $(BUILD_SHARED_LIBRARY)

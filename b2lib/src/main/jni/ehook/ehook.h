@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-typedef size_t HookId;
-
-uintptr_t get_original_fn(HookId id);
-
-HookId hook(const char *const lib, const char *const sym, void *fn);
+uintptr_t hook(const char *const lib, const char *const sym, void *fn);
 
 #endif

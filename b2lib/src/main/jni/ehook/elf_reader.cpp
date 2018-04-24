@@ -103,32 +103,34 @@ bool get_so_offset(const char *path, const char *const *p_symbols,
 
     AutoMalloc<ElfW(Sym)> sym_tab(p_sym_tab->sh_size);
     if (!reader.read(p_sym_tab->sh_offset, sym_tab.ptr, p_sym_tab->sh_size)) {
-        LOG_E("95 %lu-%s-%s %d", count, path, p_symbols[0], (int) p_sym_tab->sh_offset);
+        LOG_E("sym err %lu-%s-%s %d", count, path, p_symbols[0], (int) p_sym_tab->sh_offset);
         return false;
     }
 
     AutoMalloc<char> str_tab(p_str_tab->sh_size);
     if (!reader.read(p_str_tab->sh_offset, str_tab.ptr, p_str_tab->sh_size)) {
-        LOG_E("96 %lu-%s-%s %llu", count, path, p_symbols[0], p_str_tab->sh_offset);
+        LOG_E("str err %lu-%s-%s %llu", count, path, p_symbols[0], p_str_tab->sh_offset);
         return false;
     }
 
-    int SymCount = p_sym_tab->sh_size / sizeof(ElfW(Sym));
-    for (ElfW(Sym) *pSym = sym_tab.ptr; pSym < sym_tab.ptr + SymCount; pSym++) {
-        if (pSym->st_name >= p_str_tab->sh_size) {
-            LOG_E("97 %lu-%s-%s %d %d", count, path, p_symbols[0], (int) pSym->st_name,
+    int sym_count = p_sym_tab->sh_size / sizeof(ElfW(Sym));
+    for (ElfW(Sym) *p_sym = sym_tab.ptr; p_sym < sym_tab.ptr + sym_count; p_sym++) {
+        if (p_sym->st_name >= p_str_tab->sh_size) {
+            LOG_E("size err %lu-%s-%s %d %d", count, path, p_symbols[0], (int) p_sym->st_name,
                   (int) p_str_tab->sh_size);
             return false;
         }
+
         for (size_t i = 0; i < count; i++) {
-            if (::strcmp(p_symbols[i], str_tab.ptr + pSym->st_name) == 0) {
+            if (::strcmp(p_symbols[i], str_tab.ptr + p_sym->st_name) == 0) {
                 for (ElfW(Shdr) *p_shdr = shdr.ptr;
                      p_shdr < (shdr.ptr + header.e_shnum); p_shdr++) {
-                    if (pSym->st_value >= p_shdr->sh_offset
-                        && pSym->st_value
+                    if (p_sym->st_value >= p_shdr->sh_offset
+                        && p_sym->st_value
                            < (p_shdr->sh_offset + p_shdr->sh_size)) {
-                        p_addresses[i] = pSym->st_value - p_shdr->sh_addr
+                        p_addresses[i] = p_sym->st_value - p_shdr->sh_addr
                                          + p_shdr->sh_offset;
+                        LOG_D("symbol: %s address: %p", p_symbols[i], p_addresses[i]);
                     }
                 }
             }

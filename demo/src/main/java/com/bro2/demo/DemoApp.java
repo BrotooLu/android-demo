@@ -154,7 +154,7 @@ public class DemoApp extends Application {
 
         Timing.prepareClerk(new AverageClerk());
 
-        EHook.registerHandler(null, null, null);
+        EHook.registerHandler(null, null);
     }
 
     public static Application getApplication() {
