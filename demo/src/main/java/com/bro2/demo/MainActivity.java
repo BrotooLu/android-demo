@@ -1,23 +1,21 @@
 package com.bro2.demo;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.bro2.demo.entry.DgActivity;
-import com.bro2.demo.entry.JsBridgeActivity;
-import com.bro2.demo.entry.LocalSocketActivity;
-import com.bro2.demo.entry.MiPipeActivity;
-import com.bro2.demo.entry.ProgressBarActivity;
-import com.bro2.demo.entry.WebViewReuseActivity;
 
 import java.util.ArrayList;
 
@@ -26,6 +24,8 @@ import java.util.ArrayList;
  */
 
 public class MainActivity extends ListActivity {
+    private static final String TAG = DemoEnv.TAG_PREFIX + "main";
+
     private abstract static class TestCase implements Comparable<TestCase> {
         int priority = Integer.MIN_VALUE;
         String title;
@@ -45,47 +45,30 @@ public class MainActivity extends ListActivity {
     private final ArrayList<TestCase> mCases = new ArrayList<>();
 
     {
-        addCase(new TestCase("DgActivity") {
-            @Override
-            void onClick() {
-                startActivity(new Intent(MainActivity.this, DgActivity.class));
-            }
-        });
+        Context ctx = DemoApp.getApplication();
+        PackageManager pm = ctx.getPackageManager();
+        try {
+            PackageInfo packageInfo = pm.getPackageInfo(ctx.getPackageName(), PackageManager.GET_ACTIVITIES);
+            ActivityInfo[] activities = packageInfo == null ? null : packageInfo.activities;
+            for (int i = 0, l = activities == null ? 0 : activities.length; i < l; ++i) {
+                ActivityInfo activity = activities[i];
+                String name = activity.name;
+                if (name.startsWith("com.bro2.demo.entry")) {
+                    String tag = name.substring(name.lastIndexOf('.') + 1);
+                    final Class target = Class.forName(name);
 
-        addCase(new TestCase("JsBridgeActivity") {
-            @Override
-            void onClick() {
-                startActivity(new Intent(MainActivity.this, JsBridgeActivity.class));
-            }
-        });
+                    addCase(new TestCase(tag) {
+                        @Override
+                        void onClick() {
+                            startActivity(new Intent(MainActivity.this, target));
+                        }
+                    });
+                }
 
-        addCase(new TestCase("LocalSocketActivity") {
-            @Override
-            void onClick() {
-                startActivity(new Intent(MainActivity.this, LocalSocketActivity.class));
             }
-        });
-
-        addCase(new TestCase("MiPipeActivity") {
-            @Override
-            void onClick() {
-                startActivity(new Intent(MainActivity.this, MiPipeActivity.class));
-            }
-        });
-
-        addCase(new TestCase("ProgressBarActivity") {
-            @Override
-            void onClick() {
-                startActivity(new Intent(MainActivity.this, ProgressBarActivity.class));
-            }
-        });
-
-        addCase(new TestCase("WebViewReuseActivity") {
-            @Override
-            void onClick() {
-                startActivity(new Intent(MainActivity.this, WebViewReuseActivity.class));
-            }
-        });
+        } catch (Throwable e) {
+            Log.e(TAG, null, e);
+        }
     }
 
     @Override
