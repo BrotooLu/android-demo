@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="LineTitleLayout">
+        <attr name="height" format="dimension" />
+        <attr name="zIndex" format="integer" />
+        <attr name="border" format="reference|color" />
+        <attr name="borderHeight" format="dimension" />
+        <attr name="borderVisible" format="boolean" />
+        <attr name="progress" format="reference|color" />
+        <attr name="progressVisible" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="LineTitleLayout_Layout">
+        <attr name="element" format="string" />
+        <attr name="action" format="string" />
+        <attr name="primary" format="boolean" />
+    </declare-styleable>
+
+</resources>
