@@ -10,39 +10,114 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
         android:gravity="center"
         android:text="I am here"
         android:textAlignment="center" />
 
     <com.bro2.ui.LineTitleLayout
+        android:id="@+id/ltl_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f2f"
-        app:height="500px">
-
-        <TextView
-            android:layout_width="200px"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="10dp"
-            android:background="#000"
-            android:text="动态标题栏" />
+        app:borderDrawable="@color/colorAccent"
+        app:borderHeight="20dp"
+        app:height="100dp"
+        app:progress="50"
+        app:progressDrawable="@drawable/progress_horizontal_drawable">
 
         <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/back"
+            app:action="back"
+            app:element="backIcon" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher" />
+            android:gravity="center"
+            android:text="返回"
+            app:action="back"
+            app:element="backTxt" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="线型标题栏"
+            app:element="title"
+            app:primary="true" />
+
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/share"
+            app:action="share"
+            app:element="share" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/more"
+            app:action="more"
+            app:element="more" />
 
     </com.bro2.ui.LineTitleLayout>
-
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
         android:gravity="center"
         android:text="I am below"
         android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/bt_progress_visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="改变进度条可见" />
+
+    <Button
+        android:id="@+id/bt_border_visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="改变底部边界可见" />
+
+    <Button
+        android:id="@+id/bt_inc_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="增加进度" />
+
+    <Button
+        android:id="@+id/bt_dec_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="减少进度" />
+
+    <Button
+        android:id="@+id/bt_progress_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="改变进度条样式" />
+
+    <Button
+        android:id="@+id/bt_border_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="改变底部边界样式" />
+
 
 </LinearLayout>

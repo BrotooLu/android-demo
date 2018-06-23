@@ -3,11 +3,12 @@
 
     <declare-styleable name="LineTitleLayout">
         <attr name="height" format="dimension" />
-        <attr name="zIndex" format="integer" />
-        <attr name="border" format="reference|color" />
+        <attr name="borderDrawable" format="reference|color" />
         <attr name="borderHeight" format="dimension" />
         <attr name="borderVisible" format="boolean" />
-        <attr name="progress" format="reference|color" />
+        <attr name="progressDrawable" format="reference|color" />
+        <attr name="progressHeight" format="dimension" />
+        <attr name="progress" format="integer" />
         <attr name="progressVisible" format="boolean" />
     </declare-styleable>
 
