@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.bro2.b2lib.R;
 
@@ -17,7 +18,6 @@ import com.bro2.b2lib.R;
  * Created by Brotoo on 2018/6/21
  */
 public class LineTitleLayout extends ViewGroup {
-    private int height = -1;
     private Drawable borderDrawable;
     private int borderHeight;
     private boolean borderVisible;
@@ -49,7 +49,6 @@ public class LineTitleLayout extends ViewGroup {
     private void saveAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LineTitleLayout, defStyleAttr, defStyleRes);
         if (a == null) {
-            height = getDefaultHeight();
             borderDrawable = null;
             borderHeight = getDefaultBorderHeight();
             borderVisible = true;
@@ -61,7 +60,6 @@ public class LineTitleLayout extends ViewGroup {
         }
 
         try {
-            height = a.getDimensionPixelSize(R.styleable.LineTitleLayout_height, getDefaultHeight());
             borderDrawable = a.getDrawable(R.styleable.LineTitleLayout_borderDrawable);
             borderHeight = a.getDimensionPixelSize(R.styleable.LineTitleLayout_borderHeight, getDefaultBorderHeight());
             borderVisible = a.getBoolean(R.styleable.LineTitleLayout_borderVisible, true);
@@ -82,9 +80,60 @@ public class LineTitleLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int mode = MeasureSpec.getMode(heightMeasureSpec);
-        measureChildren(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, mode));
-        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), height);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int childCount = getChildCount();
+
+        for (int i = 0; i < childCount; ++i) {
+            final View child = getChildAt(i);
+            if (child.getVisibility() == GONE) {
+                continue;
+            }
+
+            LayoutParams params = (LayoutParams) child.getLayoutParams();
+            final float widthPercent = params.widthPercent;
+            final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, params.height);
+            final int childWidthMeasureSpec;
+            if (widthPercent > 0 && widthPercent <= 1 && widthSize > 0) {
+                childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) (widthSize * widthPercent), MeasureSpec.EXACTLY);
+            } else {
+                childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, params.width);
+            }
+
+            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+        }
+
+        int width;
+        if (widthMode == MeasureSpec.EXACTLY) {
+            width = widthSize;
+        } else {
+            width = 0;
+            for (int i = 0; i < childCount; ++i) {
+                width += getChildAt(i).getMeasuredWidth();
+            }
+
+            if (width < widthSize || widthMode == MeasureSpec.AT_MOST) {
+                width = widthSize;
+            }
+        }
+
+        int height;
+        if (heightMode == MeasureSpec.EXACTLY) {
+            height = heightSize;
+        } else {
+            height = 0;
+            for (int i = 0; i < childCount; ++i) {
+                height = Math.max(getChildAt(i).getMeasuredHeight(), height);
+            }
+
+            if (height > heightSize) {
+                height = heightSize;
+            }
+        }
+
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -106,6 +155,7 @@ public class LineTitleLayout extends ViewGroup {
             }
 
             int width = getMeasuredWidth();
+            int height = getMeasuredHeight();
             int childHeight = child.getMeasuredHeight();
             int top = (height - childHeight) / 2;
             int childWidth = child.getMeasuredWidth();
@@ -149,10 +199,6 @@ public class LineTitleLayout extends ViewGroup {
             progressDrawable.draw(canvas);
             canvas.restore();
         }
-    }
-
-    private int getDefaultHeight() {
-        return 300;
     }
 
     private int getDefaultBorderHeight() {
@@ -241,6 +287,7 @@ public class LineTitleLayout extends ViewGroup {
         String element;
         String action;
         boolean primary;
+        float widthPercent;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
@@ -251,6 +298,7 @@ public class LineTitleLayout extends ViewGroup {
                     element = a.getString(R.styleable.LineTitleLayout_Layout_element);
                     action = a.getString(R.styleable.LineTitleLayout_Layout_action);
                     primary = a.getBoolean(R.styleable.LineTitleLayout_Layout_primary, false);
+                    widthPercent = a.getFloat(R.styleable.LineTitleLayout_Layout_widthPercent, 0);
                 } finally {
                     a.recycle();
                 }
@@ -269,6 +317,7 @@ public class LineTitleLayout extends ViewGroup {
                 element = params.element;
                 action = params.action;
                 primary = params.primary;
+                widthPercent = params.widthPercent;
             }
         }
     }

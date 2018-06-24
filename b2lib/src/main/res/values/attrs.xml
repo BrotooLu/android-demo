@@ -2,7 +2,6 @@
 <resources>
 
     <declare-styleable name="LineTitleLayout">
-        <attr name="height" format="dimension" />
         <attr name="borderDrawable" format="reference|color" />
         <attr name="borderHeight" format="dimension" />
         <attr name="borderVisible" format="boolean" />
@@ -16,6 +15,7 @@
         <attr name="element" format="string" />
         <attr name="action" format="string" />
         <attr name="primary" format="boolean" />
+        <attr name="widthPercent" format="float" />
     </declare-styleable>
 
 </resources>
