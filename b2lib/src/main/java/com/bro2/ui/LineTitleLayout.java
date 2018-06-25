@@ -7,11 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bro2.b2lib.R;
+import com.bro2.exception.B2Exception;
 import com.bro2.util.DimensionUtil;
 
 import java.util.HashMap;
@@ -35,6 +37,7 @@ public class LineTitleLayout extends ViewGroup {
     private int progress;
     private boolean layoutVisible = true;
 
+    private Map<String, Integer> names = new HashMap<>();
     private HashMap<String, Object> actions = new HashMap<>();
     private Map<String, OnElementClickListener> listenerMap = new HashMap<>();
 
@@ -49,7 +52,9 @@ public class LineTitleLayout extends ViewGroup {
     }
 
     public LineTitleLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
+        super(context, attrs, defStyleAttr);
+
+        saveAttributes(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -57,10 +62,11 @@ public class LineTitleLayout extends ViewGroup {
         super(context, attrs, defStyleAttr, defStyleRes);
 
         saveAttributes(context, attrs, defStyleAttr, defStyleRes);
-        setWillNotDraw(false);
     }
 
     private void saveAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        setWillNotDraw(false);
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LineTitleLayout, defStyleAttr, defStyleRes);
         if (a == null) {
             return;
@@ -368,17 +374,51 @@ public class LineTitleLayout extends ViewGroup {
         return true;
     }
 
+    public int getChildIndex(String name) {
+        Integer index = names.get(name);
+        return index == null ? -1 : index;
+    }
+
+    public boolean removeView(String name) {
+        int index = getChildIndex(name);
+        if (index == -1) {
+
+            return false;
+        }
+
+        removeViewAt(index);
+        return true;
+    }
+
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        super.addView(child, index, params);
+        if (params instanceof LayoutParams) {
+            String element = ((LayoutParams) params).element;
+            String action = ((LayoutParams) params).action;
+            if (TextUtils.isEmpty(element)) {
+                throw new B2Exception("no element name");
+            }
+
+            int old = getChildIndex(element);
+            if (old != -1) {
+                index = old;
+                removeViewAt(index);
+            }
+
+            names.put(element, index > 0 ? index : getChildCount());
+
+            if (!TextUtils.isEmpty(action)) {
+                actions.put(action, null);
+            }
+        } else {
+            throw new B2Exception("not suitable layout params");
+        }
 
         if (listenerDispatcher != null) {
             child.setOnClickListener(listenerDispatcher);
         }
 
-        if (params instanceof LayoutParams) {
-            actions.put(((LayoutParams) params).action, null);
-        }
+        super.addView(child, index, params);
     }
 
     @Override
