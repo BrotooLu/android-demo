@@ -14,10 +14,18 @@ import android.view.ViewGroup;
 import com.bro2.b2lib.R;
 import com.bro2.util.DimensionUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Brotoo on 2018/6/21
  */
 public class LineTitleLayout extends ViewGroup {
+
+    public interface OnElementClickListener {
+        void onClick(View view, String action);
+    }
+
     private Drawable borderDrawable;
     private int borderHeight = getDefaultBorderHeight();
     private boolean borderVisible = true;
@@ -26,6 +34,11 @@ public class LineTitleLayout extends ViewGroup {
     private boolean progressVisible = true;
     private int progress;
     private boolean layoutVisible = true;
+
+    private HashMap<String, Object> actions = new HashMap<>();
+    private Map<String, OnElementClickListener> listenerMap = new HashMap<>();
+
+    private OnClickListener listenerDispatcher;
 
     public LineTitleLayout(Context context) {
         this(context, null);
@@ -320,6 +333,51 @@ public class LineTitleLayout extends ViewGroup {
                 getChildAt(i).setVisibility(visible ? VISIBLE : GONE);
             }
             requestLayout();
+        }
+    }
+
+    public boolean setOnElementClickListener(String action, OnElementClickListener listener) {
+        if (!actions.containsKey(action)) {
+            return false;
+        }
+
+        if (listener == listenerMap.get(action)) {
+            return false;
+        }
+
+        listenerMap.put(action, listener);
+
+        if (listenerDispatcher == null) {
+            listenerDispatcher = new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LayoutParams params = (LayoutParams) v.getLayoutParams();
+                    String action = params.action;
+                    OnElementClickListener listener = listenerMap.get(action);
+                    if (listener != null) {
+                        listener.onClick(v, action);
+                    }
+                }
+            };
+
+            for (int i = 0, n = getChildCount(); i < n; ++i) {
+                getChildAt(i).setOnClickListener(listenerDispatcher);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        super.addView(child, index, params);
+
+        if (listenerDispatcher != null) {
+            child.setOnClickListener(listenerDispatcher);
+        }
+
+        if (params instanceof LayoutParams) {
+            actions.put(((LayoutParams) params).action, null);
         }
     }
 

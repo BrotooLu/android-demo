@@ -28,6 +28,13 @@ public class LineTitleActivity extends Activity {
         setContentView(R.layout.activity_line_title);
 
         titleLayout = findViewById(R.id.ltl_title);
+
+        titleLayout.setOnElementClickListener("back", new LineTitleLayout.OnElementClickListener() {
+            @Override
+            public void onClick(View view, String action) {
+                finish();
+            }
+        });
     }
 
 
