@@ -10,21 +10,22 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.bro2.b2lib.R;
+import com.bro2.util.DimensionUtil;
 
 /**
  * Created by Brotoo on 2018/6/21
  */
 public class LineTitleLayout extends ViewGroup {
     private Drawable borderDrawable;
-    private int borderHeight;
-    private boolean borderVisible;
+    private int borderHeight = getDefaultBorderHeight();
+    private boolean borderVisible = true;
     private Drawable progressDrawable;
-    private int progressHeight;
-    private boolean progressVisible;
+    private int progressHeight = getDefaultProgressHeight();
+    private boolean progressVisible = true;
     private int progress;
+    private boolean layoutVisible = true;
 
     public LineTitleLayout(Context context) {
         this(context, null);
@@ -49,28 +50,34 @@ public class LineTitleLayout extends ViewGroup {
     private void saveAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LineTitleLayout, defStyleAttr, defStyleRes);
         if (a == null) {
-            borderDrawable = null;
-            borderHeight = getDefaultBorderHeight();
-            borderVisible = true;
-            progressDrawable = null;
-            progressHeight = getDefaultProgressHeight();
-            progressVisible = true;
-            progress = 0;
             return;
         }
 
         try {
-            borderDrawable = a.getDrawable(R.styleable.LineTitleLayout_borderDrawable);
-            borderHeight = a.getDimensionPixelSize(R.styleable.LineTitleLayout_borderHeight, getDefaultBorderHeight());
-            borderVisible = a.getBoolean(R.styleable.LineTitleLayout_borderVisible, true);
-            progressDrawable = a.getDrawable(R.styleable.LineTitleLayout_progressDrawable);
-            progressHeight = a.getDimensionPixelSize(R.styleable.LineTitleLayout_progressHeight, getDefaultProgressHeight());
-            progressVisible = a.getBoolean(R.styleable.LineTitleLayout_progressVisible, true);
-            progress = a.getInt(R.styleable.LineTitleLayout_progress, 0);
-            if (progress < 0) {
-                progress = 0;
-            } else if (progress > 100) {
-                progress = 100;
+            for (int i = 0, n = a.getIndexCount(); i < n; ++i) {
+                final int attr = a.getIndex(i);
+                if (attr == R.styleable.LineTitleLayout_layoutVisible) {
+                    layoutVisible = a.getBoolean(attr, true);
+                } else if (attr == R.styleable.LineTitleLayout_borderDrawable) {
+                    borderDrawable = a.getDrawable(attr);
+                } else if (attr == R.styleable.LineTitleLayout_borderHeight) {
+                    borderHeight = a.getDimensionPixelSize(attr, getDefaultBorderHeight());
+                } else if (attr == R.styleable.LineTitleLayout_borderVisible) {
+                    borderVisible = a.getBoolean(attr, true);
+                } else if (attr == R.styleable.LineTitleLayout_progressDrawable) {
+                    progressDrawable = a.getDrawable(attr);
+                } else if (attr == R.styleable.LineTitleLayout_progressHeight) {
+                    progressHeight = a.getDimensionPixelSize(attr, getDefaultProgressHeight());
+                } else if (attr == R.styleable.LineTitleLayout_progressVisible) {
+                    progressVisible = a.getBoolean(attr, true);
+                } else if (attr == R.styleable.LineTitleLayout_progress) {
+                    progress = a.getInt(attr, 0);
+                    if (progress < 0) {
+                        progress = 0;
+                    } else if (progress > 100) {
+                        progress = 100;
+                    }
+                }
             }
         } finally {
             a.recycle();
@@ -84,8 +91,26 @@ public class LineTitleLayout extends ViewGroup {
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final int childCount = getChildCount();
 
+        if (!layoutVisible) {
+            int height = 0;
+            if (borderVisible) {
+                height = Math.max(height, borderHeight);
+            }
+
+            if (progressVisible) {
+                height = Math.max(height, progressHeight);
+            }
+
+            if (height > heightSize && heightMode == MeasureSpec.AT_MOST) {
+                height = heightSize;
+            }
+
+            setMeasuredDimension(widthSize, height);
+            return;
+        }
+
+        final int childCount = getChildCount();
         for (int i = 0; i < childCount; ++i) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) {
@@ -96,7 +121,7 @@ public class LineTitleLayout extends ViewGroup {
             final float widthPercent = params.widthPercent;
             final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, params.height);
             final int childWidthMeasureSpec;
-            if (widthPercent > 0 && widthPercent <= 1 && widthSize > 0) {
+            if (widthPercent > 0) {
                 childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) (widthSize * widthPercent), MeasureSpec.EXACTLY);
             } else {
                 childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, params.width);
@@ -111,7 +136,13 @@ public class LineTitleLayout extends ViewGroup {
         } else {
             width = 0;
             for (int i = 0; i < childCount; ++i) {
-                width += getChildAt(i).getMeasuredWidth();
+                final View child = getChildAt(i);
+
+                if (child.getVisibility() == GONE) {
+                    continue;
+                }
+
+                width += child.getMeasuredWidth();
             }
 
             if (width < widthSize || widthMode == MeasureSpec.AT_MOST) {
@@ -125,7 +156,13 @@ public class LineTitleLayout extends ViewGroup {
         } else {
             height = 0;
             for (int i = 0; i < childCount; ++i) {
-                height = Math.max(getChildAt(i).getMeasuredHeight(), height);
+                final View child = getChildAt(i);
+
+                if (child.getVisibility() == GONE) {
+                    continue;
+                }
+
+                height = Math.max(child.getMeasuredHeight(), height);
             }
 
             if (height > heightSize) {
@@ -138,9 +175,15 @@ public class LineTitleLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if (!layoutVisible) {
+            return;
+        }
 
         int offMark = 0;
         boolean accOrder = true;
+
+        final int width = getMeasuredWidth();
+        final int height = getMeasuredHeight();
 
         for (int i = 0, layoutChildIndex = -1, n = getChildCount(); i < n; ++i) {
             if (accOrder) {
@@ -149,19 +192,17 @@ public class LineTitleLayout extends ViewGroup {
                 layoutChildIndex--;
             }
 
-            View child = getChildAt(layoutChildIndex);
-            if (child == null || child.getVisibility() == GONE) {
+            final View child = getChildAt(layoutChildIndex);
+            if (child.getVisibility() == GONE) {
                 continue;
             }
 
-            int width = getMeasuredWidth();
-            int height = getMeasuredHeight();
-            int childHeight = child.getMeasuredHeight();
-            int top = (height - childHeight) / 2;
-            int childWidth = child.getMeasuredWidth();
-            int bottom = (height + childHeight) / 2;
+            final int childHeight = child.getMeasuredHeight();
+            final int top = (height - childHeight) / 2;
+            final int childWidth = child.getMeasuredWidth();
+            final int bottom = (height + childHeight) / 2;
 
-            LayoutParams params = (LayoutParams) child.getLayoutParams();
+            final LayoutParams params = (LayoutParams) child.getLayoutParams();
             if (params.primary) {
                 child.layout((width - childWidth) / 2, top, (width + childWidth) / 2, bottom);
                 accOrder = false;
@@ -202,17 +243,17 @@ public class LineTitleLayout extends ViewGroup {
     }
 
     private int getDefaultBorderHeight() {
-        return 20;
+        return DimensionUtil.dp2px(getContext(), 1);
     }
 
     private int getDefaultProgressHeight() {
-        return 10;
+        return DimensionUtil.dp2px(getContext(), 3);
     }
 
     public void setProgress(int progress) {
         if (progress != this.progress && progress >= 0 && progress <= 100) {
             this.progress = progress;
-            invalidate();
+            invalidate(getProgressRect());
         }
     }
 
@@ -268,6 +309,20 @@ public class LineTitleLayout extends ViewGroup {
         }
     }
 
+    public boolean getLayoutVisible() {
+        return layoutVisible;
+    }
+
+    public void setLayoutVisible(boolean visible) {
+        if (layoutVisible != visible) {
+            layoutVisible = visible;
+            for (int i = 0, n = getChildCount(); i < n; ++i) {
+                getChildAt(i).setVisibility(visible ? VISIBLE : GONE);
+            }
+            requestLayout();
+        }
+    }
+
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
@@ -284,10 +339,10 @@ public class LineTitleLayout extends ViewGroup {
     }
 
     public static class LayoutParams extends ViewGroup.LayoutParams {
-        String element;
-        String action;
-        boolean primary;
-        float widthPercent;
+        public String element;
+        public String action;
+        public boolean primary;
+        public float widthPercent;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
@@ -299,6 +354,12 @@ public class LineTitleLayout extends ViewGroup {
                     action = a.getString(R.styleable.LineTitleLayout_Layout_action);
                     primary = a.getBoolean(R.styleable.LineTitleLayout_Layout_primary, false);
                     widthPercent = a.getFloat(R.styleable.LineTitleLayout_Layout_widthPercent, 0);
+
+                    if (widthPercent < 0) {
+                        widthPercent = 0;
+                    } else if (widthPercent > 1) {
+                        widthPercent = 1;
+                    }
                 } finally {
                     a.recycle();
                 }

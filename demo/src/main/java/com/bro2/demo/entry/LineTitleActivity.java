@@ -62,15 +62,18 @@ public class LineTitleActivity extends Activity {
                 titleLayout.setBorderVisible(!titleLayout.getBorderVisible());
                 break;
             case R.id.bt_border_style:
-                ColorDrawable borderDrawable = new ColorDrawable();
+                Drawable borderDrawable;
                 if (!BitOperator.getBit(styleFlag, MASK_BORDER)) {
                     styleFlag = BitOperator.setBit(styleFlag, MASK_BORDER, true);
-                    borderDrawable.setColor(getResources().getColor(R.color.colorPrimary));
+                    borderDrawable = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
                 } else {
                     styleFlag = BitOperator.setBit(styleFlag, MASK_BORDER, false);
-                    borderDrawable.setColor(getResources().getColor(R.color.colorAccent));
+                    borderDrawable = getResources().getDrawable(R.drawable.shadow);
                 }
                 titleLayout.setBorderDrawable(borderDrawable);
+                break;
+            case R.id.bt_title_layout_visible:
+                titleLayout.setLayoutVisible(!titleLayout.getLayoutVisible());
                 break;
         }
     }

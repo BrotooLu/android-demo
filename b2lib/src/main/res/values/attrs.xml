@@ -9,6 +9,7 @@
         <attr name="progressHeight" format="dimension" />
         <attr name="progress" format="integer" />
         <attr name="progressVisible" format="boolean" />
+        <attr name="layoutVisible" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="LineTitleLayout_Layout">

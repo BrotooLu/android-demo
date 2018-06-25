@@ -7,30 +7,24 @@
     android:orientation="vertical"
     tools:context="com.bro2.demo.entry.DgActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="I am here"
-        android:textAlignment="center" />
-
     <com.bro2.ui.LineTitleLayout
         android:id="@+id/ltl_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#6df"
-        app:borderDrawable="@color/colorAccent"
-        app:borderHeight="20dp"
+        android:layout_height="48dp"
+        app:borderDrawable="@drawable/shadow"
+        app:borderHeight="1dp"
+        app:layoutVisible="false"
         app:progress="50"
-        app:progressDrawable="@drawable/progress_horizontal_drawable">
+        app:progressDrawable="@drawable/progress_horizontal_drawable"
+        app:progressHeight="3dp">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/back"
             app:action="back"
             app:element="backIcon"
-            app:widthPercent="0.15" />
+            app:widthPercent="0.1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +33,7 @@
             android:text="返回"
             app:action="back"
             app:element="backTxt"
-            app:widthPercent="0.15" />
+            app:widthPercent="0.1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,16 +45,16 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/share"
             app:action="share"
             app:element="share"
             app:widthPercent="0.15" />
 
         <ImageView
-            android:layout_width="10dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/more"
             app:action="more"
             app:element="more"
@@ -122,6 +116,14 @@
         android:layout_gravity="center"
         android:onClick="debug"
         android:text="改变底部边界样式" />
+
+    <Button
+        android:id="@+id/bt_title_layout_visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="debug"
+        android:text="改变标题布局可见性" />
 
 
 </LinearLayout>
