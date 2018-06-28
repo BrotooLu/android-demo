@@ -2,6 +2,7 @@ package com.bro2.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -23,6 +24,13 @@ import java.util.Map;
  * Created by Brotoo on 2018/6/21
  */
 public class LineTitleLayout extends ViewGroup {
+    public static final int DEFAULT_HEIGHT_DP_LAYOUT = 48;
+    public static final int DEFAULT_HEIGHT_DP_BORDER = 1;
+    public static final int DEFAULT_HEIGHT_DP_PROGRESS = 3;
+
+    public static final int PRIMARY_GRAVITY_START = 0;
+    public static final int PRIMARY_GRAVITY_CENTER = 1;
+    public static final int PRIMARY_GRAVITY_END = 2;
 
     public interface OnElementClickListener {
         void onClick(View view, String action);
@@ -36,6 +44,7 @@ public class LineTitleLayout extends ViewGroup {
     private boolean progressVisible = true;
     private int progress;
     private boolean layoutVisible = true;
+    private int primaryGravity = PRIMARY_GRAVITY_CENTER;
 
     private Map<String, Integer> names = new HashMap<>();
     private HashMap<String, Object> actions = new HashMap<>();
@@ -54,14 +63,28 @@ public class LineTitleLayout extends ViewGroup {
     public LineTitleLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        saveAttributes(context, attrs, defStyleAttr, 0);
+        init(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public LineTitleLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
+        init(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         saveAttributes(context, attrs, defStyleAttr, defStyleRes);
+
+        Resources resources = context.getResources();
+        if (borderDrawable == null) {
+            borderDrawable = resources.getDrawable(R.drawable.border_shadow);
+        }
+
+        if (progressDrawable == null) {
+            progressDrawable = resources.getDrawable(R.drawable.horizontal_progress);
+        }
+        progressDrawable.mutate();
     }
 
     private void saveAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -77,13 +100,13 @@ public class LineTitleLayout extends ViewGroup {
                 final int attr = a.getIndex(i);
                 if (attr == R.styleable.LineTitleLayout_layoutVisible) {
                     layoutVisible = a.getBoolean(attr, true);
-                } else if (attr == R.styleable.LineTitleLayout_borderDrawable) {
+                } else if (attr == R.styleable.LineTitleLayout_borderRes) {
                     borderDrawable = a.getDrawable(attr);
                 } else if (attr == R.styleable.LineTitleLayout_borderHeight) {
                     borderHeight = a.getDimensionPixelSize(attr, getDefaultBorderHeight());
                 } else if (attr == R.styleable.LineTitleLayout_borderVisible) {
                     borderVisible = a.getBoolean(attr, true);
-                } else if (attr == R.styleable.LineTitleLayout_progressDrawable) {
+                } else if (attr == R.styleable.LineTitleLayout_progressRes) {
                     progressDrawable = a.getDrawable(attr);
                 } else if (attr == R.styleable.LineTitleLayout_progressHeight) {
                     progressHeight = a.getDimensionPixelSize(attr, getDefaultProgressHeight());
@@ -96,12 +119,31 @@ public class LineTitleLayout extends ViewGroup {
                     } else if (progress > 100) {
                         progress = 100;
                     }
+                } else if (attr == R.styleable.LineTitleLayout_primaryGravity) {
+                    primaryGravity = a.getInt(attr, PRIMARY_GRAVITY_CENTER);
                 }
             }
         } finally {
             a.recycle();
         }
 
+    }
+
+    private void measureChild(View child, int widthMeasureSpec, int heightMeasureSpec, int widthSize, LayoutParams params) {
+        final double widthPercent = params.widthPercent;
+        final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, params.height);
+        final int childWidthMeasureSpec;
+        if (widthPercent > 0) {
+            childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) (widthSize * widthPercent), MeasureSpec.EXACTLY);
+        } else {
+            childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, params.width);
+        }
+
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+    }
+
+    private void measureChildAtMost(View child, int maxWidth, int heightMeasureSpec) {
+        child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST), heightMeasureSpec);
     }
 
     @Override
@@ -129,67 +171,89 @@ public class LineTitleLayout extends ViewGroup {
             return;
         }
 
+        View primary = null;
+
+        int totalWidth = 0;
+        int totalHeight = 0;
         final int childCount = getChildCount();
-        for (int i = 0; i < childCount; ++i) {
-            final View child = getChildAt(i);
+        int leftWidth = 0;
+        int rightWidth = -1;
+        for (int i = 0, rightMark = 0; i < childCount; ++i) {
+            boolean fromRight = rightMark != 0;
+            final View child = getChildAt(fromRight ? childCount - rightMark : i);
             if (child.getVisibility() == GONE) {
                 continue;
             }
 
             LayoutParams params = (LayoutParams) child.getLayoutParams();
-            final float widthPercent = params.widthPercent;
-            final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, params.height);
-            final int childWidthMeasureSpec;
-            if (widthPercent > 0) {
-                childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) (widthSize * widthPercent), MeasureSpec.EXACTLY);
+            if (params.primary) {
+                if (primary != null) {
+                    throw new B2Exception("only one primary supported");
+                }
+                primary = child;
+                rightWidth = 0;
+                rightMark = 1;
+                continue;
+            }
+
+            measureChild(child, widthMeasureSpec, heightMeasureSpec, widthSize, params);
+
+            int childWidth = child.getMeasuredWidth();
+            int max = widthSize > 0 ? widthSize - totalWidth : Integer.MAX_VALUE;
+            if (max < childWidth) {
+                measureChildAtMost(child, max, heightMeasureSpec);
+                childWidth = child.getMeasuredWidth();
+            }
+
+            if (fromRight) {
+                rightWidth += childWidth;
+                rightMark++;
             } else {
-                childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, params.width);
+                leftWidth += childWidth;
             }
 
-            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            totalWidth += childWidth;
+            totalHeight = Math.max(child.getMeasuredHeight(), totalHeight);
+
+            if (totalWidth >= widthSize && widthSize > 0) {
+                break;
+            }
         }
 
-        int width;
+        int primaryMax = widthSize - (primaryGravity == PRIMARY_GRAVITY_CENTER ? (Math.max(leftWidth, rightWidth) * 2) : totalWidth);
+        if (primary != null) {
+            if (primaryMax > 0) {
+                LayoutParams params = (LayoutParams) primary.getLayoutParams();
+                measureChild(primary, widthMeasureSpec, heightMeasureSpec, widthSize, params);
+                int primaryWidth = primary.getMeasuredWidth();
+                if (primaryWidth > primaryMax) {
+                    measureChildAtMost(primary, primaryMax, heightMeasureSpec);
+                    primaryWidth = primary.getMeasuredWidth();
+                }
+                totalWidth += primaryWidth;
+                totalHeight = Math.max(primary.getMeasuredHeight(), totalHeight);
+            } else {
+                measureChildAtMost(primary, 0, heightMeasureSpec);
+            }
+        }
+
         if (widthMode == MeasureSpec.EXACTLY) {
-            width = widthSize;
+            totalWidth = widthSize;
         } else {
-            width = 0;
-            for (int i = 0; i < childCount; ++i) {
-                final View child = getChildAt(i);
-
-                if (child.getVisibility() == GONE) {
-                    continue;
-                }
-
-                width += child.getMeasuredWidth();
-            }
-
-            if (width < widthSize || widthMode == MeasureSpec.AT_MOST) {
-                width = widthSize;
+            if (totalWidth < widthSize || widthMode == MeasureSpec.AT_MOST) {
+                totalWidth = widthSize;
             }
         }
 
-        int height;
         if (heightMode == MeasureSpec.EXACTLY) {
-            height = heightSize;
+            totalHeight = heightSize;
         } else {
-            height = 0;
-            for (int i = 0; i < childCount; ++i) {
-                final View child = getChildAt(i);
-
-                if (child.getVisibility() == GONE) {
-                    continue;
-                }
-
-                height = Math.max(child.getMeasuredHeight(), height);
-            }
-
-            if (height > heightSize) {
-                height = heightSize;
+            if (totalHeight > heightSize) {
+                totalHeight = heightSize;
             }
         }
 
-        setMeasuredDimension(width, height);
+        setMeasuredDimension(totalWidth, totalHeight);
     }
 
     @Override
@@ -198,20 +262,21 @@ public class LineTitleLayout extends ViewGroup {
             return;
         }
 
-        int offMark = 0;
-        boolean accOrder = true;
 
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
 
-        for (int i = 0, layoutChildIndex = -1, n = getChildCount(); i < n; ++i) {
-            if (accOrder) {
-                layoutChildIndex++;
-            } else {
-                layoutChildIndex--;
-            }
+        View primary = null;
+        int offset = 0;
+        int leftOffset = 0;
+        int primaryTop = 0;
+        int primaryBottom = 0;
+        int primaryWidth = 0;
 
-            final View child = getChildAt(layoutChildIndex);
+        for (int i = 0, rightMark = 0, n = getChildCount(); i < n; ++i) {
+            boolean fromRight = rightMark != 0;
+
+            final View child = getChildAt(fromRight ? n - rightMark : i);
             if (child.getVisibility() == GONE) {
                 continue;
             }
@@ -223,20 +288,35 @@ public class LineTitleLayout extends ViewGroup {
 
             final LayoutParams params = (LayoutParams) child.getLayoutParams();
             if (params.primary) {
-                child.layout((width - childWidth) / 2, top, (width + childWidth) / 2, bottom);
-                accOrder = false;
-                layoutChildIndex = n;
-                offMark = width;
+                rightMark = 1;
+                offset = width;
+                primary = child;
+                primaryWidth = childWidth;
+                primaryTop = top;
+                primaryBottom = bottom;
+            } else if (!fromRight) {
+                int newMark = offset + childWidth;
+                child.layout(offset, top, newMark, bottom);
+                leftOffset = offset = newMark;
             } else {
-                if (accOrder) {
-                    int newMark = offMark + childWidth;
-                    child.layout(offMark, top, newMark, bottom);
-                    offMark = newMark;
-                } else {
-                    int newMark = offMark - childWidth;
-                    child.layout(newMark, top, offMark, bottom);
-                    offMark = newMark;
-                }
+                int newMark = offset - childWidth;
+                child.layout(newMark, top, offset, bottom);
+                offset = newMark;
+                rightMark++;
+            }
+        }
+
+        if (primary != null) {
+            switch (primaryGravity) {
+                case PRIMARY_GRAVITY_START:
+                    primary.layout(leftOffset, primaryTop, leftOffset + primaryWidth, primaryBottom);
+                    break;
+                case PRIMARY_GRAVITY_CENTER:
+                    primary.layout((width - primaryWidth) / 2, primaryTop, (width + primaryWidth) / 2, primaryBottom);
+                    break;
+                case PRIMARY_GRAVITY_END:
+                    primary.layout(offset - primaryWidth, primaryTop, offset, primaryBottom);
+                    break;
             }
         }
     }
@@ -262,11 +342,11 @@ public class LineTitleLayout extends ViewGroup {
     }
 
     private int getDefaultBorderHeight() {
-        return DimensionUtil.dp2px(getContext(), 1);
+        return DimensionUtil.dp2px(getContext(), DEFAULT_HEIGHT_DP_BORDER);
     }
 
     private int getDefaultProgressHeight() {
-        return DimensionUtil.dp2px(getContext(), 3);
+        return DimensionUtil.dp2px(getContext(), DEFAULT_HEIGHT_DP_PROGRESS);
     }
 
     public void setProgress(int progress) {
@@ -300,6 +380,7 @@ public class LineTitleLayout extends ViewGroup {
     public void setProgressDrawable(Drawable drawable) {
         if (progressDrawable != drawable) {
             progressDrawable = drawable;
+            progressDrawable.mutate();
             invalidate(getProgressRect());
         }
     }
@@ -325,6 +406,13 @@ public class LineTitleLayout extends ViewGroup {
         if (borderDrawable != drawable) {
             borderDrawable = drawable;
             invalidate(getBorderRect());
+        }
+    }
+
+    public void setBorderHeight(int height) {
+        if (borderHeight != height) {
+            borderHeight = height;
+            invalidate();
         }
     }
 
@@ -390,13 +478,28 @@ public class LineTitleLayout extends ViewGroup {
         return true;
     }
 
+    public void setPrimaryGravity(int gravity) {
+        if (primaryGravity == gravity) {
+            return;
+        }
+
+        switch (gravity) {
+            case PRIMARY_GRAVITY_START:
+            case PRIMARY_GRAVITY_CENTER:
+            case PRIMARY_GRAVITY_END:
+                primaryGravity = gravity;
+                requestLayout();
+                break;
+        }
+    }
+
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (params instanceof LayoutParams) {
             String element = ((LayoutParams) params).element;
             String action = ((LayoutParams) params).action;
             if (TextUtils.isEmpty(element)) {
-                throw new B2Exception("no element name");
+                throw new RuntimeException("no element name");
             }
 
             int old = getChildIndex(element);
@@ -411,7 +514,7 @@ public class LineTitleLayout extends ViewGroup {
                 actions.put(action, null);
             }
         } else {
-            throw new B2Exception("not suitable layout params");
+            throw new RuntimeException("not suitable layout params");
         }
 
         if (listenerDispatcher != null) {
@@ -440,7 +543,7 @@ public class LineTitleLayout extends ViewGroup {
         public String element;
         public String action;
         public boolean primary;
-        public float widthPercent;
+        public double widthPercent;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
