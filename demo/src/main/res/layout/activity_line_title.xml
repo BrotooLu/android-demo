@@ -2,48 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:id="@+id/ll_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.bro2.demo.entry.DgActivity">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="I am here"
-        android:textAlignment="center" />
+    tools:context=".entry.LineTitleActivity">
 
     <com.bro2.ui.LineTitleLayout
         android:id="@+id/ltl_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#6df"
-        app:borderDrawable="@color/colorAccent"
-        app:borderHeight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:borderHeight="1dp"
+        app:borderRes="@drawable/border_shadow"
         app:progress="50"
-        app:progressDrawable="@drawable/progress_horizontal_drawable">
+        app:progressHeight="3dp"
+        app:progressRes="@drawable/horizontal_progress">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FF0000"
             android:src="@drawable/back"
             app:action="back"
-            app:element="backIcon"
-            app:widthPercent="0.15" />
+            app:element="backIcon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#00FF00"
             android:gravity="center"
             android:text="返回"
             app:action="back"
             app:element="backTxt"
-            app:widthPercent="0.15" />
+            app:widthPercent="0.1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#0000FF"
             android:text="线型标题栏"
             app:element="title"
             app:primary="true"
@@ -51,16 +47,17 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FF00FF"
             android:src="@drawable/share"
             app:action="share"
-            app:element="share"
-            app:widthPercent="0.15" />
+            app:element="share" />
 
         <ImageView
-            android:layout_width="10dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00FFFF"
             android:src="@drawable/more"
             app:action="more"
             app:element="more"
@@ -68,60 +65,145 @@
 
     </com.bro2.ui.LineTitleLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="I am below"
-        android:textAlignment="center" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/bt_progress_visible"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:text="可见性变更"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/bt_progress_visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="进度条" />
+
+        <Button
+            android:id="@+id/bt_border_visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="底部边界" />
+
+        <Button
+            android:id="@+id/bt_title_layout_visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="标题布局" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="debug"
-        android:text="改变进度条可见" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/bt_border_visible"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:text="进度变更"
+            android:textAlignment="center" />
+
+
+        <Button
+            android:id="@+id/bt_inc_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="增加" />
+
+        <Button
+            android:id="@+id/bt_dec_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="减少" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="debug"
-        android:text="改变底部边界可见" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/bt_inc_progress"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:text="样式变更"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/bt_progress_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="进度条" />
+
+        <Button
+            android:id="@+id/bt_border_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="底部边界" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="debug"
-        android:text="增加进度" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/bt_dec_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="debug"
-        android:text="减少进度" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:text="主元素位置"
+            android:textAlignment="center" />
 
-    <Button
-        android:id="@+id/bt_progress_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="debug"
-        android:text="改变进度条样式" />
+        <Button
+            android:id="@+id/bt_primary_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="开始" />
 
-    <Button
-        android:id="@+id/bt_border_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="debug"
-        android:text="改变底部边界样式" />
+        <Button
+            android:id="@+id/bt_primary_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="居中" />
 
+        <Button
+            android:id="@+id/bt_primary_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="debug"
+            android:text="结束" />
+    </LinearLayout>
 
 </LinearLayout>

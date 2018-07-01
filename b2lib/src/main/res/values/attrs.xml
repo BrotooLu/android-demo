@@ -2,13 +2,19 @@
 <resources>
 
     <declare-styleable name="LineTitleLayout">
-        <attr name="borderDrawable" format="reference|color" />
+        <attr name="borderRes" format="reference|color" />
         <attr name="borderHeight" format="dimension" />
         <attr name="borderVisible" format="boolean" />
-        <attr name="progressDrawable" format="reference|color" />
+        <attr name="progressRes" format="reference|color" />
         <attr name="progressHeight" format="dimension" />
         <attr name="progress" format="integer" />
         <attr name="progressVisible" format="boolean" />
+        <attr name="layoutVisible" format="boolean" />
+        <attr name="primaryGravity" format="enum">
+            <enum name="start" value="0" />
+            <enum name="center" value="1" />
+            <enum name="end" value="2" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="LineTitleLayout_Layout">
