@@ -24,4 +24,8 @@
         <attr name="widthPercent" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="MultipleIndexLayout_Layout">
+        <attr name="zIndex" format="integer" />
+    </declare-styleable>
+
 </resources>

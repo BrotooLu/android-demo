@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".entry.MultipleIndexActivity">
+
+    <com.bro2.ui.MultipleIndexLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.bro2.ui.LineTitleLayout
+            android:id="@+id/ltl_title"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            app:borderHeight="1dp"
+            app:borderRes="@drawable/border_shadow"
+            app:progress="50"
+            app:progressHeight="3dp"
+            app:progressRes="@drawable/horizontal_progress"
+            app:zIndex="3">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back"
+                app:action="back"
+                app:element="backIcon"
+                app:widthPercent="0.1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="返回"
+                app:action="back"
+                app:element="backTxt"
+                app:widthPercent="0.1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="线型标题栏"
+                app:element="title"
+                app:primary="true" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/share"
+                app:action="share"
+                app:element="share"
+                app:widthPercent="0.15" />
+
+        </com.bro2.ui.LineTitleLayout>
+
+        <WebView
+            android:id="@+id/wv_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:zIndex="2" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试一下"
+            android:background="@color/colorAccent"
+            app:zIndex="3"
+            />
+
+    </com.bro2.ui.MultipleIndexLayout>
+
+
+</LinearLayout>

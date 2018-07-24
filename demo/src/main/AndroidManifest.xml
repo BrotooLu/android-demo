@@ -34,6 +34,10 @@
         <activity android:name=".entry.LocalSocketActivity" />
         <activity android:name=".entry.LineTitleActivity" />
 
+        <activity
+            android:name=".entry.MultipleIndexActivity"
+            android:theme="@android:style/Theme.Translucent" />
+
         <service
             android:name=".localsocket.ClientService"
             android:process=":sock" />
