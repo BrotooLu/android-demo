@@ -13,4 +13,6 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compile androidPlugin
+    compile 'org.javassist:javassist:3.24.0-GA'
+    compile "commons-io:commons-io:2.6"
 }
