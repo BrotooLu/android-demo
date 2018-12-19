@@ -38,3 +38,4 @@ dependencies {
 }
 
 //apply plugin: 'com.bro2.gradle.transform-demo'
+apply plugin: 'resource-remove'
