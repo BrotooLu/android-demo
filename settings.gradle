@@ -1,1 +1,1 @@
-include ':b2lib', ':demo'
+include ':b2lib', ':demo', ':b2jni'
