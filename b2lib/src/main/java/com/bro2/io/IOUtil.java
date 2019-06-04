@@ -48,6 +48,14 @@ public final class IOUtil {
         }
     }
 
+    public static void copy(InputStream src, OutputStream dest) throws IOException {
+        int read;
+        byte[] buffer = new byte[1024 * 4];
+        while ((read = src.read(buffer, 0, buffer.length)) != -1) {
+            dest.write(buffer, 0, read);
+        }
+    }
+
     public static int readStreamAtMost(InputStream inputStream, byte[] buffer) throws IOException {
         int remain = buffer.length;
         int start = 0;
